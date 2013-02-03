@@ -11,6 +11,8 @@ class Creamery : public Adafruit_WS2801 {
 	
     Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
 	
+	
+	// Effects
 	void 
 		render(),
 		strobe(uint8_t runs),
@@ -51,45 +53,50 @@ class Creamery : public Adafruit_WS2801 {
 		colorWipe(uint32_t c, uint8_t wait),
 		colorFill(uint32_t c);
 	
-	long timer;
+	
+	
 	unsigned const static long pduration = 900000;
 	unsigned const static long iduration = 30000;
 		
 	unsigned long 
+		timer,
 		interval,
 		phase;
 
 	int test,
 		selector,
-		intensity;
-
-	bool 
-		trans(uint16_t i, uint32_t newcolor, uint8_t wait);
+		intensity,
+		division;
 	
 	uint32_t 
 		primary,
-		secondary;
+		secondary,
+		tertiary;
 
-    // uint16_t current_pixel;
+
+	bool // Currently unsure about this one. Trying to make transitions work.
+		trans(uint16_t i, uint32_t newcolor, uint8_t wait);
+
 	uint8_t 
 		R(uint8_t from, uint8_t to),
-		extractRed(uint32_t c),
-		extractGreen(uint32_t c),
-		extractBlue(uint32_t c);		
+		extractRed(uint32_t c),						// Effects
+		extractGreen(uint32_t c),					// Effects
+		extractBlue(uint32_t c);		            // Effects
 
 	void 
-		extractColor();
+		extractColor(),								// Effects	
+		q(int pos, uint32_t color);
 		
 	uint32_t 		
-		RandomColor(),
-		RandomWheel(),
-		rgba(byte r, byte g, byte b, double a),
-		Color(byte r, byte g, byte b),
-		Color(byte r, byte g, byte b, double a),		
-		Color(uint32_t c, double a),
-		alpha(uint32_t c, double a),
-		Wheel(byte WheelPos),
-		Wheel(byte WheelPos,double alpha);
+		RandomColor(), 								// Effects > 
+		RandomWheel(), 								// Effects > 
+		rgba(byte r, byte g, byte b, double a), 	// Effects > 
+		Color(byte r, byte g, byte b), 				// Effects > 
+		Color(byte r, byte g, byte b, double a),    // Effects > 
+		Color(uint32_t c, double a),                // Effects > 
+		alpha(uint32_t c, double a),                // Effects > 
+		Wheel(byte WheelPos),                       // Effects > 
+		Wheel(byte WheelPos,double alpha);          // Effects > 
 		
 	
 

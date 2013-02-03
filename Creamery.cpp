@@ -11,13 +11,15 @@ Creamery::Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Adaf
 	this->timer = 0;
 	this->phase = 0;
 	this->interval = 0;
-	// iduration = 15000;	
-	// pduration = 900000; 15 Minutes
 	this->selector = 0;	
-
+	
+	// Grid vars
+	this->division = 12;
+	
+	// Setup some base colors variables to use for things like polkadot
 	this->primary = this->RandomWheel();
 	this->secondary = this->RandomWheel();
-	
+	this->tertiary = this->RandomWheel();
 
 	// Phase modifier = phase * 
 	// %10
@@ -241,14 +243,14 @@ void Creamery::PolkadotPulse(uint32_t c, uint32_t d, uint8_t wait, uint8_t susta
   
   	int i;
   	double alpha;
-  	int total = this->numPixels();
+  	int total = this->numPixels()/division;
   
 	for(alpha=0;alpha<1;alpha=alpha+0.01) {
 	    for(i=0;i<total;i++)  {
 			if ((i%2)==0) {
-	        	this->setPixelColor(i, this->Color(c,alpha));
+	        	this->q(i, this->Color(c,alpha));
 	      	} else {
-	        	this->setPixelColor(i, this->Color(d,alpha));      
+	        	this->q(i, this->Color(d,alpha));      
 	      	}
 	    }
 	    this->show();
@@ -257,7 +259,7 @@ void Creamery::PolkadotPulse(uint32_t c, uint32_t d, uint8_t wait, uint8_t susta
   	// this->show();
 	
 	delay(sustain);	
-	FadeOut(wait);
+	FadeOut(0);
 	// for(alpha=1;alpha>0;alpha=alpha-0.01) {
 	//       	if ((i%2)==0) {
 	//        		this->setPixelColor(i, this->Color(c,alpha));
@@ -548,8 +550,8 @@ void Creamery::rainbow(uint8_t wait) {
   int i, j;
    
   for (j=0; j < 256; j++) {     // 3 cycles of all 256 colors in the wheel
-    for (i=0; i < this->numPixels(); i++) {
-      this->setPixelColor(i, this->Wheel( (i + j) % 255));
+    for (i=0; i < this->numPixels()/division; i++) {
+      this->q(i, this->Wheel( (i + j) % 255));
     }  
     this->show();   // write all the pixels out
     delay(wait);
@@ -559,8 +561,8 @@ void Creamery::rainbow(uint8_t wait) {
 void Creamery::rainbowStrobe(uint8_t wait) {
   	int i, j;
    
-    for (i=0; i < this->numPixels(); i++) {
-      this->setPixelColor(i, RandomWheel());
+    for (i=0; i < this->numPixels()/division; i++) {
+      this->q(i, RandomWheel());
     }  
     this->show();   // write all the pixels out
     delay(wait);
@@ -573,12 +575,12 @@ void Creamery::rainbowCycle(uint8_t wait) {
   int i, j;
   
   for (j=0; j < 256 * 5; j++) {     // 5 cycles of all 25 colors in the wheel
-    for (i=0; i < this->numPixels(); i++) {
+    for (i=0; i < this->numPixels()/division; i++) {
       // tricky math! we use each pixel as a fraction of the full 96-color wheel
       // (thats the i / this->numPixels() part)
       // Then add in j which makes the colors go around per pixel
       // the % 96 is to make the wheel cycle around
-      this->setPixelColor(i, this->Wheel( ((i * 256 / this->numPixels()) + j) % 256) );
+      this->q(i, this->Wheel( ((i * 256 / this->numPixels()) + j) % 256) );
     }  
     this->show();   // write all the pixels out
     delay(wait);
@@ -590,8 +592,8 @@ void Creamery::rainbowCycle(uint8_t wait) {
 void Creamery::colorWipe(uint32_t c, uint8_t wait) {
   int i;
   
-  for (i=0; i < this->numPixels(); i++) {
-      this->setPixelColor(i, c);
+  for (i=0; i < this->numPixels()/division; i++) {
+      this->q(i, c);
       this->show();
       delay(wait);
   }
@@ -603,7 +605,7 @@ void Creamery::colorFill(uint32_t c) {
   int i;
   
   for (i=0; i < this->numPixels(); i++) {
-      this->setPixelColor(i, c);
+      this->q(i, c);
   }
   this->show();
 }
@@ -674,6 +676,25 @@ void Creamery::FadeOut(uint8_t wait) {
 }
 
 /* Helper functions */
+
+// "Queue" method to translate pixel positions for standard, mirrored, and radial modes.
+void Creamery::q(int pos, uint32_t color) {		
+	if (division == 1) {
+		this->setPixelColor(pos,color);
+	} else if (division == 2) {
+		// left/right mirror mode.
+		// mirror(pos,color);
+	} else if (division == 4) {
+		// Radial Mode
+		// radial(pos,color);
+	} else if (division == 12) { // Make each panel do the same thing.
+		int p;
+		for (int i=0;i<this->numPixels()/division;i++) {
+			if (i%2) { p = (12*i)+11-(pos); } else { p = (i*12)+(pos); }
+			this->setPixelColor(p, color);		
+		}
+	}			 
+}
 
 //Shorter random function, static helper. 
 uint8_t Creamery::R(uint8_t from, uint8_t to){

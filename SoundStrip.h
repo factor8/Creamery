@@ -13,7 +13,6 @@ class SoundStrip : public Creamery {
     SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
 	
 	int
-		division,
 		spectrumReset,
 		spectrumStrobe,
 		spectrumAnalog,  //0 for left channel, 1 for right.
@@ -33,7 +32,8 @@ class SoundStrip : public Creamery {
 		Divisor;
 		
 	
-	void 		
+	void
+		colorWipe(uint32_t c, uint8_t wait),
 		RainbowLevel(uint8_t wait),
 		rainbowPulse(uint8_t wait),
 		rainbowSpectrum(uint8_t wait),
@@ -54,7 +54,8 @@ class SoundStrip : public Creamery {
 
 	int test,
 		selector,
-		intensity;
+		intensity,
+		division;
 
 	uint32_t 
 		primary,
