@@ -66,7 +66,7 @@ SoundStrip::SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : 
 	// Phase modifier = phase * 
 	// %10
 	
-	this->test = 0;
+	this->test = 1;
 	
 }
 ///Do we need deconstructor?
@@ -80,8 +80,9 @@ void SoundStrip::render() {
 	
 	
 	if (test == 1) {
-		this->PolkadotPulse(RandomWheel(),RandomWheel(),1,100);
-		// colorWipe(RandomWheel(),1);
+		PolkadotCycle(RandomWheel(),RandomWheel(),100);
+		// FadeOut(10);
+		// colorWipe(RandomWheel(),1000);
 	} else {
 
   	if (this->timer > this->iduration*this->interval) {
@@ -422,55 +423,11 @@ void SoundStrip::q(int pos, uint32_t color) {
 	} else if (division == 4) {
 		// Radial Mode
 		// radial(pos,color);
-	} else if (division == 12) { // Make each panel do the same thing.
+	} else if (division == 3) { // Make each panel do the same thing.
 		int p;
 		for (int i=0;i<this->numPixels()/division;i++) {
-			if (i%2) { p = (12*i)+11-(pos); } else { p = (i*12)+(pos); }
+			p = (i%2) ? (division*i)+(division-1)-(pos) : (i*division)+(pos);
 			this->setPixelColor(p, color);		
 		}
 	}			 
 }
-
-/*
-
-Position: 0 
-0 12 24 36 48 60 72 84 96 108 120 132  
-Position: 1 
-12 11 36 35 60 59 84 83 108 107 132 131  
-Position: 2 
-24 10 48 34 72 58 96 82 120 106 144 130  
-Position: 3 
-36 9 60 33 84 57 108 81 132 105 156 129  
-Position: 4 
-48 8 72 32 96 56 120 80 144 104 168 128  
-Position: 5 
-60 7 84 31 108 55 132 79 156 103 180 127  
-Position: 6 
-72 6 96 30 120 54 144 78 168 102 192 126  
-Position: 7 
-84 5 108 29 132 53 156 77 180 101 204 125  
-Position: 8 
-96 4 120 28 144 52 168 76 192 100 216 124  
-Position: 9 
-108 3 132 27 156 51 180 75 204 99 228 123  
-Position: 10 
-120 2 144 26 168 50 192 74 216 98 240 122  
-Position: 11 
-132 1 156 25 180 49 204 73 228 97 252 121  
-
-
-000 023 024 047 048 060 000 023 000 023 000 023  
-001 022 025 046 049 0-- 001 022 001 022 001 022  
-002 021 026 045 050 021 002 021 002 021 002 021  
-003 020 027 044 051 020 003 020 003 020 003 020  
-004 019 028 043 052 019 004 019 004 019 004 019  
-005 018 029 042 053 018 005 018 005 018 005 018  
-006 017 030 041 054 017 006 017 006 017 006 017  
-007 016 031 040 055 016 007 016 007 016 007 016  
-008 015 032 039 056 015 008 015 008 015 008 015  
-009 014 033 038 057 014 009 014 009 014 009 014  
-010 013 034 037 058 013 010 013 010 013 010 013 
-011 012 035 036 059 012 011 012 011 012 011 012
-
-
-*/

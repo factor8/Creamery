@@ -222,6 +222,25 @@ void Creamery::Malfunction() {
 }
 
 
+void Creamery::PolkadotCycle(uint32_t c, uint32_t d, uint8_t wait) {
+
+  for (int j=0; j < 256 * 5; j++) {     // 5 cycles of all 25 colors in the wheel
+    for (int i=0; i < this->numPixels()/division; i++) {
+
+			if ((i%2)==0) {
+	        	this->q(i, c);
+	      	} else {
+	        	this->q(i, d);      
+	      	}
+	    }
+			
+      // this->q(i, this->Wheel( ((i * 256 / this->numPixels()) + j) % 256) );
+    }  
+    this->show();   // write all the pixels out
+    delay(wait);
+	
+}
+
 // Usage:
 // polkadots(Color(255,0,255),Color(0,255,255), 50);
 void Creamery::polkadotFill(uint32_t c, uint32_t d, uint8_t wait) {

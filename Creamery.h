@@ -1,9 +1,9 @@
 #include <Arduino.h>
-#include "Adafruit_WS2801.h"
+#include <Adafruit_WS2801.h>
 
 /*
- * The color wipe effect changes each pixel in turn
- * to the given color.
+ * Creamery.
+ * Eventually this will be just the Effects class.
  */
 
 class Creamery : public Adafruit_WS2801 {
@@ -18,6 +18,7 @@ class Creamery : public Adafruit_WS2801 {
 		strobe(uint8_t runs),
 		polkadotFill(uint32_t c, uint32_t d, uint8_t wait),
 		PolkadotPulse(uint32_t c, uint32_t d, uint8_t wait, uint8_t sustain),
+		PolkadotCycle(uint32_t c, uint32_t d, uint8_t wait),
 		RainbowPulse(uint8_t wait),
 		ColorPulse(uint32_t color, uint8_t wait),
 		SparkleChaos1(),
