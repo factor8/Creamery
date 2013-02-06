@@ -11,11 +11,11 @@ class Grid {
 	
     Grid(int total);
 	
-	int gridMode;
+		int gridMode;
 	
-	void
-		translate(int mode);
-		setMode(int mode_id);
+		void
+			translate(int mode);
+			setMode(int mode_id);
 		
 	
 };

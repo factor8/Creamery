@@ -55,51 +55,49 @@ class Creamery : public Adafruit_WS2801 {
 		colorFill(uint32_t c);
 	
 	
-	
-	unsigned const static long pduration = 900000;
-	unsigned const static long iduration = 30000;
+	unsigned const static long pduration = 900000; // Controller
+	unsigned const static long iduration = 30000;  // Controller
 		
-	unsigned long 
-		timer,
-		interval,
-		phase;
+	unsigned long  	//Controller
+		timer,			 	//Controller
+		interval,			//Controller
+		phase;				//Controller
 
-	int test,
-		selector,
-		intensity,
-		division;
+	int test,				//Controller
+		selector,			//Controller
+		intensity,		//Effects
+		division;			//Grid or Effects
 	
-	uint32_t 
+	uint32_t 	// Define some fallback colors.
 		primary,
 		secondary,
 		tertiary;
 
 
-	bool // Currently unsure about this one. Trying to make transitions work.
+	bool // Currently unsure about this one. Attempt at making transitions work.
 		trans(uint16_t i, uint32_t newcolor, uint8_t wait);
 
 	uint8_t 
-		R(uint8_t from, uint8_t to),
+		R(uint8_t from, uint8_t to),			// Random Number Shortcut // Util.
 		extractRed(uint32_t c),						// Effects
 		extractGreen(uint32_t c),					// Effects
-		extractBlue(uint32_t c);		            // Effects
+		extractBlue(uint32_t c);		      // Effects
 
 	void 
 		extractColor(),								// Effects	
-		q(int pos, uint32_t color);
+		q(int pos, uint32_t color);		// Grid
 		
 	uint32_t 		
-		RandomColor(), 								// Effects > 
-		RandomWheel(), 								// Effects > 
-		rgba(byte r, byte g, byte b, double a), 	// Effects > 
-		Color(byte r, byte g, byte b), 				// Effects > 
+		RandomColor(), 															// Effects > 
+		RandomWheel(), 															// Effects > 
+		rgba(byte r, byte g, byte b, double a), 		// Effects > 
+		Color(byte r, byte g, byte b), 							// Effects > 
 		Color(byte r, byte g, byte b, double a),    // Effects > 
 		Color(uint32_t c, double a),                // Effects > 
 		alpha(uint32_t c, double a),                // Effects > 
 		Wheel(byte WheelPos),                       // Effects > 
 		Wheel(byte WheelPos,double alpha);          // Effects > 
-		
-	
+			
 
 };
 

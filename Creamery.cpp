@@ -707,9 +707,9 @@ void Creamery::q(int pos, uint32_t color) {
 		// Radial Mode
 		// radial(pos,color);
 	} else if (division == 12) { // Make each panel do the same thing.
-		int p;
-		for (int i=0;i<this->numPixels()/division;i++) {
-			if (i%2) { p = (12*i)+11-(pos); } else { p = (i*12)+(pos); }
+		int p,i;
+		for (i=0 ;i<this->numPixels()/division;i++) {
+			p = (i%2) ? p = (12*i)+11-(pos) : p = (i*12)+(pos);
 			this->setPixelColor(p, color);		
 		}
 	}			 
