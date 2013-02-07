@@ -20,11 +20,6 @@ Creamery::Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Adaf
 	this->primary = this->RandomWheel();
 	this->secondary = this->RandomWheel();
 	this->tertiary = this->RandomWheel();
-
-	// Phase modifier = phase * 
-	// %10
-	
-	// this->test = 1;
 	
 }
 ///Do we need deconstructor?

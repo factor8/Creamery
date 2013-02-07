@@ -7,59 +7,62 @@
  * to the given color.
  */
 
+// Defined elswhere:
+// class Grid;
+
 class SoundStrip : public Creamery {
   public:
 	
-    SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
-	
-	int
-		spectrumReset,
-		spectrumStrobe,
-		spectrumAnalog,  //0 for left channel, 1 for right.
-
-		// Spectrum analyzer read values will be kept here.
-		Spectrum[7],
-
-		average,
-		kickThreshold,
-		snareThreshold,
-		kick,
-		snare,
-
-		// Divisor for audio signal scaling ///
-		// 22 ~ 80
-		// 72 ~ 10
-		Divisor;
+		// Alignment Enumeration : Start From? /// This might not be the way to approach this
+		enum {left,right,up,down,horizontal,vertical};			// Belongs in Controller or Pattern
+		enum {strand,panel,mirrored};		// Belongs to Controller or Pattern
 		
-	
-	void
-		colorWipe(uint32_t c, uint8_t wait),
-		RainbowLevel(uint8_t wait),
-		rainbowPulse(uint8_t wait),
-		rainbowSpectrum(uint8_t wait),
-		readSpectrum(),		
-		showSpectrum(uint8_t wait),
-		mirror(int pos, uint32_t color),
-		q(int pos, uint32_t color),
-		render();
-
-  private:
-	long timer;
-	unsigned const static long pduration = 900000;
-	unsigned const static long iduration = 30000;
+    	SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
 		
-	unsigned long 
-		interval,
-		phase;
+		int pixels[];
+	
+		void
+			colorWipe(uint32_t c, uint8_t wait),
+			RainbowLevel(uint8_t wait),
+			rainbowPulse(uint8_t wait),
+			rainbowSpectrum(uint8_t wait),
+			readSpectrum(),		
+			showSpectrum(uint8_t wait),
+			mirror(int pos, uint32_t color),
+			grid(),
+			q(int pos, uint32_t color),
+			render();
 
-	int test,
-		selector,
-		intensity,
-		division;
 
-	uint32_t 
-		primary,
-		secondary;
+	  private:
+		
+		// controller vars:
+		long timer; 													// 
+		unsigned const static long pduration = 900000;		// phase duration
+		unsigned const static long iduration = 30000;		// interval duration
+		
+		unsigned long 
+			interval,
+			phase;
+
+		
+		int 
+			total,
+			test,
+			debug,
+			selector,
+			intensity,
+			division,
+			panelsX,
+			panelsY,
+			pixelsX,
+			pixelsY,		
+			mode,	
+			orientation;
+
+		uint32_t 
+			primary,
+			secondary;
 			
 };
 
