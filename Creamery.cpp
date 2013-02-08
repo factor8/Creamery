@@ -10,9 +10,13 @@ Creamery::Creamery(Grid *g) {
 	
 	// defaults
   	this->frequency = 50;
-  	this->last_execution = 0;
-	this->direction;
-  	
+	this->sustain = 20;
+	this->intensity = 20;
+	this->direction = asc;
+	this->grid->orientation = horizontal;
+	this->last_execution = 0;
+
+		
 	// Setup some base colors variables to use for things like polkadot
 	this->primary = this->RandomWheel();
 	this->secondary = this->RandomWheel();
@@ -23,6 +27,14 @@ Creamery::Creamery(Grid *g) {
 void Creamery::step() {   
 	
 }
+
+
+// We need an effect that hits just one panel
+// Pixel, Color, Freq, Sust
+// void Creamery::singlePulse(uint8_t n,uint32_t c, uint16_t f, uint16_t s) {
+// 	Make sure if you are trying to hit a whole panel, you set the orientation and mode of grid.	
+// 	grid->q(n,c);
+// }
 
 //Nuff said, only duration, not speed can be set (made this 15 minutes before you took my balls.)
 void Creamery::strobe(uint8_t runs){
@@ -455,8 +467,6 @@ void Creamery::colorWipe(uint32_t c,uint32_t d,uint8_t wait) {
   	int i;  
 
 	Serial.println("Beginning Effect ColorWipe...");
-	
-	// /HARDCODE
 
 	if (d == desc) {
 		// Descending
@@ -468,8 +478,7 @@ void Creamery::colorWipe(uint32_t c,uint32_t d,uint8_t wait) {
 			
 	} else {
 		// Ascending
-		for (i=this->grid->getTotal()/this->grid->panelsX;i>=0;i--) {
-			
+		for (i=this->grid->getTotal()/this->grid->panelsX;i>=0;i--) {			
 			this->grid->q(i, c);
 			this->grid->show();
 			delay(wait);

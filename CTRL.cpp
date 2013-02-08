@@ -75,7 +75,7 @@ void CTRL::render() {
 		
 		// PolkadotCycle(RandomWheel(),RandomWheel(),100);
 		// FadeOut(10);
-		colorWipe(this->creamery->RandomWheel(),asc,600);
+		this->creamery->colorWipe(this->creamery->RandomWheel(),asc,600);
 	} else {
 
 	  	if (this->timer > this->iduration*this->interval) {

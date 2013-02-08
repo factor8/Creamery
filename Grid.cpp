@@ -22,7 +22,6 @@ Grid::Grid(Adafruit_WS2801 *strip,int panelsX, int panelsY,int pixelsX,int pixel
 // "Queue" method to translate pixel positions based on orientation and mode.
 void Grid::q(uint16_t pos, uint32_t c) {		
 	
-	Serial.println("Queue... pos=");Serial.println(pos);
 	
 	if (this->mode == strand) {
 		this->setPixelColor(pos,c);
@@ -47,8 +46,13 @@ void Grid::q(uint16_t pos, uint32_t c) {
 				this->setPixelColor(p,c);		
 			}
 			
-		}	
-	}			 
+		}
+		
+	} else {
+		this->setPixelColor(pos,c);
+	}
+	
+	
 }
 
 // // "Queue" method to translate pixel positions based on orientation and mode.
@@ -88,9 +92,7 @@ void Grid::setGridMode(uint8_t modeid) {
 		this->mode = modeid;
 	}
 }
-void Grid::setPixelColor(uint16_t n, uint32_t c) {
-	Serial.println("Setting... n=");Serial.println(n);
-	
+void Grid::setPixelColor(uint16_t n, uint32_t c) {	
 	this->strip->setPixelColor(n,c);
 }	
 uint8_t Grid::getGridMode() {

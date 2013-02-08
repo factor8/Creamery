@@ -58,14 +58,15 @@ char json[BUFFER_SIZE];
 EthernetClient client;
 
 int jsonBufferIndex = 0;
+int last_connect = 0;
 
 // ====
 
 // Grid Vars
-int panelsX = 12;
+int panelsX = 6;
 int panelsY = 1;
 int pixelsX = 1;
-int pixelsY = 12;
+int pixelsY = 3;
 int pixelsTotal = panelsX*panelsY*pixelsX*pixelsY;
 
 // Instantiate Controller. Num Pix Automatically Generated.
@@ -98,7 +99,9 @@ void setup() {
 
 void loop()
 {
-	ReadJsonBytes(); //On success, calls Route with method. Every effect needs some routing.
+	// ReadJsonBytes(); //On success, calls Route with method. Every effect needs some routing.
+	ctrl.render();
+	// We need this here too so that we can work without the connection
 }
 
 
@@ -146,14 +149,10 @@ void ConnectToSocket()
 	{
     	Serial.println("connected"); Serial.flush();
 	} 
-	else 
-	{
-      Serial.println("Connection failed, trying again in 5 seconds.");
-      delay(5000); ConnectToSocket();
-  } 
 }
 
 void ReadJsonBytes(){
+	
 	while(client.connected()) {
 	  //if you are connected and data is available
 	  if (client.available()) {
@@ -197,7 +196,13 @@ void ReadJsonBytes(){
 
 	  }
 	}
-   if(!client.connected()) { ConnectToSocket(); }
+   if(millis() > last_connect+5000 && !client.connected()) { 
+		ConnectToSocket(); 	
+	} else {	
+		Serial.println("Connection failed, trying again in 5 seconds.");
+		last_connect = millis();
+  } 
+
 }
 
 
@@ -319,40 +324,3 @@ uint8_t parseOptionNumber(aJsonObject* root, char* target)
  * Refer to http://hardwarefun.com/tutorials/parsing-json-in-arduino
 * if(option) {return option->valuefloat; }
  */
-
-
-// #include "SPI.h"
-// #include "Adafruit_WS2801.h"
-// #include <Easing.h>
-// #include "Grid.h"
-// #include "CTRL.h"
-// 
-// int dataPin  = 2;    // White wire on Adafruit Pixels
-// int clockPin = 3;    // Green wire on Adafruit Pixels
-// 
-// // Grid Vars
-// int panelsX = 12;
-// int panelsY = 1;
-// int pixelsX = 1;
-// int pixelsY = 12;
-// int pixelsTotal = panelsX*panelsY*pixelsX*pixelsY;
-// 
-// // Instantiate Controller. Num Pix Automatically Generated.
-// // CTRL ctrl = CTRL(pixelsTotal, dataPin, clockPin);
-// 
-// Adafruit_WS2801 *strip = new Adafruit_WS2801(pixelsTotal, dataPin, clockPin);
-// CTRL ctrl = CTRL(strip,panelsX,panelsY,pixelsX,pixelsY);
-// 
-// void setup() {
-// 
-// 	Serial.begin(9600);	
-//   	
-// 	// Initialize Controller and turn off LEDS.
-// 	strip->begin();
-// 	strip->show();
-// }
-// 
-// void loop() {	
-// 
-// 	ctrl.render();
-// }
