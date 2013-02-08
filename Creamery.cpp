@@ -9,13 +9,12 @@ Creamery::Creamery(Grid *g) {
 	this->grid = g;		
 	
 	// defaults
-  	this->frequency = 50;
+  	this->frequency = 900;
 	this->sustain = 20;
 	this->intensity = 20;
 	this->direction = asc;
 	this->grid->orientation = horizontal;
 	this->last_execution = 0;
-
 		
 	// Setup some base colors variables to use for things like polkadot
 	this->primary = this->RandomWheel();
@@ -305,6 +304,7 @@ void Creamery::DoubleRainbowSparkle(uint8_t density, uint8_t wait, uint8_t susta
 
 //3 Parameter SPARKLE
 void Creamery::Sparkle(uint32_t color, uint8_t density, uint8_t wait){
+	Serial.println("Running Sparkle");
     int total=this->grid->getTotal();
     int r; 
     int i;
@@ -333,17 +333,17 @@ void Creamery::Sparkle(uint32_t color, uint8_t density, uint8_t wait){
 
 //5 Parameter SPARKLE
 void Creamery::Sparkle(uint32_t color, uint8_t density, uint8_t wait, uint8_t sustain, uint32_t bg){
-    int total=this->grid->getTotal();
-    int r; 
-    int i;
-    int pixel; 
+	int total=this->grid->getTotal();
+	int r; 
+	int i;
+	int pixel; 
 
-  //Set all pixels to bg
-  for(i=0; i < this->grid->getTotal(); i++ ) {
-    //Set color
-    this->grid->q(i, bg);
-  }
-  delay(wait);
+  	//Set all pixels to bg
+  	for(i=0; i < this->grid->getTotal(); i++ ) {
+    	//Set color
+    	this->grid->q(i, bg);
+  	}
+  	delay(wait);
   //  update Lights
   this->grid->show();
   
@@ -470,7 +470,7 @@ void Creamery::colorWipe(uint32_t c,uint32_t d,uint8_t wait) {
 
 	if (d == desc) {
 		// Descending
-		for (i=0; i<this->grid->getTotal()/this->grid->pixelsY; i++) {		
+		for (i=0; i<this->grid->getTotal(); i++) {		
 			this->grid->q(i, c);
 			this->grid->show();
 			delay(wait);
@@ -478,7 +478,7 @@ void Creamery::colorWipe(uint32_t c,uint32_t d,uint8_t wait) {
 			
 	} else {
 		// Ascending
-		for (i=this->grid->getTotal()/this->grid->panelsX;i>=0;i--) {			
+		for (i=this->grid->getTotal();i>=0;i--) {			
 			this->grid->q(i, c);
 			this->grid->show();
 			delay(wait);

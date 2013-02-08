@@ -32,18 +32,19 @@ void Grid::q(uint16_t pos, uint32_t c) {
 	if (this->mode == panel) { // Make each panel do the same thing.
 		int p;	
 		// Serial.println(this->orientation);
-	
+		Serial.println(pos);
 		if (this->orientation == horizontal) {
 			for (int i=0;i<this->total/this->panelsX;i++) {				
 				p = this->pixelsY*pos+i;
 				this->setPixelColor(p, c);
-				Serial.println(p);				
+				// Serial.println(p);
 			}
 		} else if (this->orientation == vertical) {
 	
 			for (int i=0;i<this->total/this->pixelsY;i++) {
 				p = (i%2) ? (this->panelsX*i)+(this->pixelsY-1)-(pos) : (i*this->panelsX)+(pos);
 				this->setPixelColor(p,c);		
+				// Serial.println(p);
 			}
 			
 		}
@@ -99,7 +100,15 @@ uint8_t Grid::getGridMode() {
 	return this->mode;
 }			
 uint8_t Grid::getTotal() {
-	return this->total;
+	// We need to add adjustments for orientation too...
+
+	if (this->mode == panel) {
+		return this->total/this->panelsX;
+	} else if (this->mode == mirrored) {
+		return this->total; ////
+	} else {
+		return this->total;
+	}	
 }			
 // Returns Serial ID of XY position in grid.
 uint8_t Grid::getXY(int x, int y){}

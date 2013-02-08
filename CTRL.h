@@ -54,6 +54,8 @@ class CTRL {
 			debug,
 			selector,
 			intensity,
+			frequency,
+			density,
 			division,
 			panelsX,
 			panelsY,

@@ -32,8 +32,10 @@ CTRL::CTRL(Adafruit_WS2801 *strip,int panelsX, int panelsY,int pixelsX,int pixel
 	// === Grid / Pattern vars === 
 	// Division sets the strand mode. 1 is regular, 2 is Mirror, 3 is Triangle (not added yet), 4 is Radial.
 	this->mode = panel;
-	this->orientation = vertical;
+	this->orientation = horizontal;
 	this->direction = asc;
+	this->density = 1;
+	this->frequency = 200;
 			
 	// this->panelsX = 12;
 	// this->panelsY = 1;
@@ -70,12 +72,12 @@ void CTRL::render() {
 	Serial.print("Render: ");
 	Serial.println(this->timer);	
 	
-	if (test == 1) {
-		Serial.println("Test Mode Engaged");
+	if (test == 1) {		
 		
 		// PolkadotCycle(RandomWheel(),RandomWheel(),100);
 		// FadeOut(10);
-		this->creamery->colorWipe(this->creamery->RandomWheel(),asc,600);
+		this->creamery->Sparkle(this->creamery->RandomWheel(),this->density,this->frequency);
+		// this->creamery->colorWipe(this->creamery->RandomWheel(),asc,600);
 	} else {
 
 	  	if (this->timer > this->iduration*this->interval) {

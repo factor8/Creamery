@@ -63,10 +63,10 @@ int last_connect = 0;
 // ====
 
 // Grid Vars
-int panelsX = 6;
+int panelsX = 12;
 int panelsY = 1;
 int pixelsX = 1;
-int pixelsY = 3;
+int pixelsY = 12;
 int pixelsTotal = panelsX*panelsY*pixelsX*pixelsY;
 
 // Instantiate Controller. Num Pix Automatically Generated.
@@ -148,7 +148,9 @@ void ConnectToSocket()
 	if (client.connect(server, 1337)) 
 	{
     	Serial.println("connected"); Serial.flush();
-	} 
+	} else {
+		Serial.println("Connection failed, trying again in 5 seconds.");
+	}
 }
 
 void ReadJsonBytes(){
@@ -171,7 +173,7 @@ void ReadJsonBytes(){
 						parseOptions(root);
 						
 						/**/
-						Route();
+						// Route();
 						/**/
 					
 					} 
@@ -196,13 +198,17 @@ void ReadJsonBytes(){
 
 	  }
 	}
-   if(millis() > last_connect+5000 && !client.connected()) { 
-		ConnectToSocket(); 	
-	} else {	
-		Serial.println("Connection failed, trying again in 5 seconds.");
-		last_connect = millis();
-  } 
-
+   if(!client.connected()) { 
+		if (millis() > last_connect+5000) {
+			// Serial.println(millis());
+			// Serial.println(last_connect+5000);
+   		ConnectToSocket(); 	
+			last_connect = millis();
+		}
+   } else {	
+   		
+   		
+     } 
 }
 
 
