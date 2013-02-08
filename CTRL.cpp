@@ -1,9 +1,9 @@
 #include "Adafruit_WS2801.h"
-#include "SoundStrip.h"
+#include "CTRL.h"
 #include "TrueRandom.h"
 #include <Easing.h>
 
-SoundStrip::SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Creamery(n, dpin, cpin, order) {
+CTRL::CTRL(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Creamery(n, dpin, cpin, order) {
 	
 	this->total = this->numPixels();
 
@@ -23,7 +23,7 @@ SoundStrip::SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : 
 	
 	// === Grid / Pattern vars === 
 	// Division sets the strand mode. 1 is regular, 2 is Mirror, 3 is Triangle (not added yet), 4 is Radial.
-	this->mode = panel;
+	this->mode = strand;
 	this->orientation = vertical;
 	this->direction = asc;
 			
@@ -54,7 +54,7 @@ SoundStrip::SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : 
 ///Do we need deconstructor?
 
 // Ignore this.
-void SoundStrip::grid() {
+void CTRL::grid() {
 	int pix[this->total];
 	int panels[12];
 	int i,j;
@@ -70,7 +70,7 @@ void SoundStrip::grid() {
 	// for each panel set pixels
 }
 
-void SoundStrip::render() {   
+void CTRL::render() {   
 
 	this->timer = millis();
 	
@@ -219,7 +219,7 @@ void SoundStrip::render() {
 
 // fill the dots one after the other with said color
 // good for testing purposes
-void SoundStrip::colorWipe(uint32_t c, uint32_t d,uint8_t wait) {
+void CTRL::colorWipe(uint32_t c, uint32_t d,uint8_t wait) {
   	int i;  
 
 	Serial.println("Beginning Effect ColorWipe...");
@@ -229,11 +229,13 @@ void SoundStrip::colorWipe(uint32_t c, uint32_t d,uint8_t wait) {
 	// } else {
 	// 	int division = panelX or panelY
 	// }
-	
+
+	///HARDCODE
+	division = 5;
 
 	if (direction == desc) {
 		// Descending
-		for (i=0; i<this->numPixels()/this->division; i++) {		
+		for (i=0; i<this->numPixels()/division; i++) {		
 			q(i, c);
 			this->show();
 			delay(wait);
@@ -241,7 +243,7 @@ void SoundStrip::colorWipe(uint32_t c, uint32_t d,uint8_t wait) {
 			
 	} else {
 		// Ascending
-		for (i=this->numPixels()/this->division;i>=0;i--) {
+		for (i=this->numPixels()/division;i>=0;i--) {
 			
 			q(i, c);
 			this->show();
@@ -255,7 +257,7 @@ void SoundStrip::colorWipe(uint32_t c, uint32_t d,uint8_t wait) {
 }
 
 // Translate the LED position to Mirror the strand output. This is a custom mapping for a DJ Booth
-void SoundStrip::mirror(int pos, uint32_t color) {
+void CTRL::mirror(int pos, uint32_t color) {
 // 
 // 	int left,right;
 //  	
@@ -296,7 +298,7 @@ void SoundStrip::mirror(int pos, uint32_t color) {
 
 
 // "Queue" method to translate pixel positions for standard, mirrored, and radial modes.
-void SoundStrip::q(int pos, uint32_t color) {		
+void CTRL::q(int pos, uint32_t color) {		
 
 	if (this->mode == strand) {
 		this->setPixelColor(pos,color);

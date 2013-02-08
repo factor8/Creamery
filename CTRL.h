@@ -10,13 +10,13 @@
 // Defined elswhere:
 // class Grid;
 
-class SoundStrip : public Creamery {
+class CTRL : public Creamery {
   public:
 	
 		// Alignment,Direction,Pattern Enumeration
 		enum {asc,desc,	horizontal,vertical,	strand,panel,mirrored};			// Belongs in Controller or Pattern
 		
-    	SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
+    	CTRL(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
 		
 		int pixels[];
 	

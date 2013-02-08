@@ -1,5 +1,5 @@
 // #include "Adafruit_WS2801.h"
-// #include "SoundStrip.h"
+// #include "CTRL.h"
 // #include "TrueRandom.h"
 // #include <Easing.h>
 // #include "Audio.h"

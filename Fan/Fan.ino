@@ -2,8 +2,8 @@
 #include "Adafruit_WS2801.h"
 #include <Easing.h>
 #include <TrueRandom.h>
-// #include "Grid.h"
-#include "SoundStrip.h"
+#include "Grid.h"
+#include "CTRL.h"
 
 // Choose which 2 pins you will use for output.
 // Can be any valid output pins.
@@ -12,32 +12,31 @@
 int dataPin  = 2;     // Yellow wire on Adafruit Pixels
 int clockPin = 3;    // Green wire on Adafruit Pixels
 
-// Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
-SoundStrip strip = SoundStrip(144, dataPin, clockPin);
-
 // This doesn't do anything yet. I'm just preparing 
-// int panelsX = 12;
-// int panelsY = 1;
-// int pixelsX = 1;
-// int pixelsY = 12;
+int panelsX = 5;
+int panelsY = 1;
+int pixelsX = 1;
+int pixelsY = 5;
+int pixelsTotal = panelsX*panelsY*pixelsX*pixelsY;
 
-// Grid* grid = new Grid(strip,panelsX,pixelsY,pixelsX,pixelsY);
+// Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
+CTRL ctrl = CTRL(pixelsTotal, dataPin, clockPin);
+Adafruit_WS2801 *strip = new Adafruit_WS2801(pixelsTotal, dataPin, clockPin);
+// CTRL strip = CTRL(pixelsTotal, dataPin, clockPin);
+
+Grid *grid = new Grid(strip,panelsX,panelsY,pixelsX,pixelsY,1);
 
 // Optional: leave off pin numbers to use hardware SPI
 // (pinout is then specific to each board and can't be changed)
 //Adafruit_WS2801 strip = Adafruit_WS2801(25);
 
 void setup() {
-		
-  	strip.begin();
+
+	Serial.begin(9600);	
+  	ctrl.begin();
 	
-	Serial.begin(9600);
-	// Sparkle s = new Sparkle();
-	// Serial.println(s.total);
-
   	// Update LED contents, to start they are all 'off'
-  	strip.show();
-
+  	ctrl.show();
 }
 
 void loop() {	
@@ -159,5 +158,5 @@ void loop() {
 		// strobe white over rainbow bg
 	}
 	*/
-	strip.render();
+	ctrl.render();
 }

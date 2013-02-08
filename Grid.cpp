@@ -43,9 +43,38 @@ void Grid::q(uint16_t pos, uint32_t c) {
 				p = (i%2) ? (this->panelsX*i)+(this->pixelsY-1)-(pos) : (i*this->panelsX)+(pos);
 				this->setPixelColor(p,c);		
 			}
+			
 		}	
 	}			 
 }
+
+// // "Queue" method to translate pixel positions based on orientation and mode.
+// uint16_t Grid::translate(uint16_t pos) {		
+// 	if (this->mode == strand) {
+// 		return pos;
+// 	} else if (this->mode == mirrored) {
+// 		// left/right mirror mode.
+// 		// mirror(pos,c);
+// 	}	
+// 	if (this->mode == panel) { // Make each panel do the same thing.
+// 		int p;		
+// 		if (this->orientation == horizontal) {
+// 			for (int i=0;i<this->total/this->panelsX;i++) {				
+// 				p = this->pixelsY*pos+i;
+// 				this->setPixelColor(p, c);
+// 				Serial.println(p);
+// 			}
+// 			
+// 		} else if (this->orientation == vertical) {
+// 	
+// 			for (int i=0;i<this->total/this->pixelsY;i++) {
+// 				p = (i%2) ? (this->panelsX*i)+(this->pixelsY-1)-(pos) : (i*this->panelsX)+(pos);
+// 				this->setPixelColor(p,c);		
+// 			}
+// 			
+// 		}	
+// 	}			 
+// }
 
 void Grid::setGridMode(uint8_t modeid) {
 	if (modeid == strand || modeid == panel || modeid == mirrored) {
@@ -62,5 +91,5 @@ uint8_t Grid::getGridMode() {
 uint8_t Grid::getXY(int x, int y){}
 
 uint32_t Grid::getPixelColor(uint16_t n) {
-	// return(this->strip->getPixelColor(q(n)));
+	return(this->strip->getPixelColor(n));
 }

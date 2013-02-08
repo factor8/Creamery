@@ -2,14 +2,14 @@
 #include "Creamery.h"
 #include "TrueRandom.h"
 #include "Easing.h"
-// #include "Grid.h"
+#include "Grid.h"
 
 // Creamery::Creamery(Grid *grid) {
 Creamery::Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Adafruit_WS2801(n, dpin, cpin, order) {
 	
 	// this->total = this->numPixels();
 	
-	
+	// this->grid = grid;
 	
 	// Controller vars
 	// this->timer = 0;
@@ -29,156 +29,8 @@ Creamery::Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Adaf
 }
 ///Do we need deconstructor?
 
-void Creamery::render() {   
+void Creamery::step() {   
 
-	// this->timer = millis();
-	// 
-	// if (test == 1) {
-	// 
-	// 	// ON/OFF Test
-	// 	// colorFill(Color(5,0,0));
-	// 	// colorFill(rgba(200,255,255,1));
-	// 	// delay(4000);
-	// 	// colorFill(Color(0,0,0)); 
-	// 	// delay(1200);					
-	// 	
-	// 	rainbowCycle(10);
-	// 	
-	// 	// primary = this->Wheel(TrueRandom.random(0,255));
-	// 	// secondary = this->Wheel(TrueRandom.random(0,255));
-	// 			
-	// 	// this->RainbowPulse(1);
-	// 	// this->Malfunction();
-	// 	// this->ButterflyEffect();
-	// 	
-	// 	// Attempt at Inverted Sparkle
-	// 	// uint32_t color = RandomWheel();
-	// 
-	// 	// for (i=1;i<105;i++) {
-	// 	// 	// for (i=1;i<255;i++) {
-	// 	// 		this->Sparkle(Color(0,0,0), i, 10, 50, color);
-	// 	// 	// }			
-	// 	// }
-	// 
-	// 	// this->rainbowStrobe(5);
-	// 	
-	// 	// FadeOut(1);
-	// 	
-	// 	// this->polkadotFill(primary,secondary,1000);
-	// 	// this->FadeInOutWhite(50);
-	// 	// this->FadeInOutRandom(40);
-	// 	// this->RainbowPulse(10);
-	// 	// this->SparkleRainbow(20,10);
-	// 	
-	// 	// this->setPixelColor(01,Color(255,255,255));
-	// 	// this->show();
-	// 	
-	// } else {
-	// 
-	//   	if (this->timer > this->iduration*this->interval) {
-	// 	
-	// 	Serial.print("=== Interval "); Serial.print(this->interval); Serial.println(" ===");			
-	// 	Serial.print("Timer: ");
-	// 	Serial.println(this->timer);
-	// 	Serial.print("interval * iduration: ");
-	// 	Serial.println(this->interval*this->iduration);		
-	// 	
-	// 	// Check for Phase
-	// 	if (this->timer > phase * pduration) {
-	// 		phase++;
-	// 	}
-	// 	
-	// 	// Increment interval
-	//      	this->interval++;		
-	// 	
-	// 	// This speeds us up as time goes on.
-	// 	if (timer < 3*(60*(60*1000))) {
-	// 		intensity = (iduration / interval) / selector;
-	// 	} else {
-	// 		intensity = (iduration / interval / selector) %10 + (phase/2);
-	// 	}
-	// 
-	// 	// Increment Selector
-	//      	this->selector = TrueRandom.random(0,10);
-	// 	// this->selector = 8;
-	// 	
-	// 	// Check audio and other factors here...
-	// 	// 	Primary Color, Secondary Color, Delay, Odd/Even Interval
-	// 	
-	// 	primary = this->Wheel(TrueRandom.random(0,255));
-	// 	secondary = this->Wheel(TrueRandom.random(0,255));		
-	// 	
-	// 	Serial.print("Phase: ");
-	// 	Serial.println(phase);
-	// 	
-	// 	Serial.print("Intensity: ");
-	// 	Serial.println(intensity);
-	// 	
-	// 	Serial.print("selector: "); 	
-	//  	Serial.println(this->selector);
-	// 
-	// }
-	// 
-	// 
-	// if (phase < 4) {		
-	// 	// if (selector == 0) { Serial.println("Effect: Sparkle"); this->Malfunction(); }
-	// 	if (selector == 1) { Serial.println("Effect: Sparkle"); this->Sparkle(RandomWheel(), interval%20, 100, 100, primary); }
-	// 	if (selector == 2) { Serial.println("Effect: Strobe"); this->DoubleRainbowSparkle(20,20,100); }
-	// 	if (selector == 3) { Serial.println("Effect: RainbowPulse"); this->RainbowPulse(1); }	
-	// 	if (selector == 4) { Serial.println("Effect: ButterflyEffect"); this->ButterflyEffect(); }
-	// 	if (selector == 5) { Serial.println("Effect: SparkleRandom"); this->SparkleRandom(); }
-	// 	if (selector == 6) { Serial.println("Effect: ColorPulseRainbow"); this->ColorPulse(RandomWheel(),10); }
-	// 	if (selector == 7) { Serial.println("Effect: PolkaDots"); this->PolkadotPulse(this->Wheel(TrueRandom.random(0,255)),this->Wheel(TrueRandom.random(0,255)),50,1000); }				
-	// 	if (selector == 8) { Serial.println("Effect: SparkleRainbow Bubblegum IceCream"); this->SparkleRainbow(20,intensity*10); }
-	// 	if (selector == 9) { Serial.println("Effect: Rainbow Strobe"); this->rainbowStrobe(500); }
-	// 	if (selector == 10) { Serial.println("Effect: FasterSlower"); this->FasterSlower(); }
-	// 	
-	// } else if (phase < 8) {
-	// 	// if (selector == 0) { Serial.println("Effect: Sparkle"); this->Malfunction(); }
-	// 	if (selector == 1) { Serial.println("Effect: Sparkle"); this->Sparkle(RandomWheel(), interval%20, 100, 100, primary); }
-	// 	if (selector == 2) { Serial.println("Effect: Strobe"); this->DoubleRainbowSparkle(20,20,100); }
-	// 	if (selector == 3) { Serial.println("Effect: RainbowPulse"); this->RainbowPulse(1); }	
-	// 	if (selector == 4) { Serial.println("Effect: SinglePixel"); this->SinglePixel(1); }
-	// 	if (selector == 5) { Serial.println("Effect: SparkleRandom"); this->SparkleRandom(); }
-	// 	if (selector == 6) { Serial.println("Effect: ColorPulseRainbow"); this->ColorPulse(RandomWheel(),1); }
-	// 	if (selector == 7) { Serial.println("Effect: PolkaDots"); this->PolkadotPulse(this->Wheel(TrueRandom.random(0,255)),this->Wheel(TrueRandom.random(0,255)),50,1000); }				
-	// 	if (selector == 8) { Serial.println("Effect: SparkleRainbow Bubblegum IceCream"); this->SparkleRainbow(20,10); }
-	// 	if (selector == 9) { Serial.println("Effect: Rainbow Strobe"); this->rainbowStrobe(500); }
-	// 	if (selector == 10) { Serial.println("Effect: SparkleChaos1"); this->SparkleChaos1(); }
-	// 	
-	// } else if (phase < 16) {
-	// 	// if (selector == 0) { Serial.println("Effect: Sparkle"); this->Malfunction(); }
-	// 	if (selector == 1) { Serial.println("Effect: Sparkle"); this->Sparkle(RandomWheel(), interval%20, 100, 100, primary); }
-	// 	if (selector == 2) { Serial.println("Effect: Strobe"); this->DoubleRainbowSparkle(20,20,100); }
-	// 	if (selector == 3) { Serial.println("Effect: RainbowPulse"); this->RainbowPulse(1); }	
-	// 	if (selector == 4) { Serial.println("Effect: SinglePixel"); this->SinglePixel(1); }
-	// 	if (selector == 5) { Serial.println("Effect: SparkleRandom"); this->SparkleRandom(); }		
-	// 	if (selector == 6) { Serial.println("Effect: FadeInOutRandom"); this->FadeInOutRandom(10); }
-	// 	if (selector == 7) { Serial.println("Effect: PolkaDotStrobe"); this->polkadotFill(this->Wheel(TrueRandom.random(0,255)),this->Wheel(TrueRandom.random(0,255)),intensity*10); }	
-	// 	if (selector == 8) { Serial.println("Effect: SparkleRainbow Bubblegum IceCream"); this->SparkleRainbow(20,10); }
-	// 	if (selector == 9) { Serial.println("Effect: Rainbow Strobe"); this->rainbowStrobe(500); }
-	// 	if (selector == 10) { Serial.println("Effect: SparkleChaos1"); this->SparkleChaos1(); }
-	// 	
-	// } else if (phase < 32) {	
-	// 	// if (selector == 0) { Serial.println("Effect: Sparkle"); this->Malfunction(); }
-	// 	if (selector == 1) { Serial.println("Effect: Sparkle"); this->Sparkle(RandomWheel(), interval%20, 100, 100, primary); }
-	// 	if (selector == 2) { Serial.println("Effect: Strobe"); this->DoubleRainbowSparkle(20,20,100); }
-	// 	if (selector == 3) { Serial.println("Effect: RainbowPulse"); this->RainbowPulse(1); }	
-	// 	if (selector == 4) { Serial.println("Effect: SinglePixel"); this->SinglePixel(1); }
-	// 	if (selector == 5) { Serial.println("Effect: SparkleRandom"); this->SparkleRandom(); }
-	// 	if (selector == 6) { Serial.println("Effect: FadeInOutRandom"); this->FadeInOutRandom(10); }
-	// 	if (selector == 7) { Serial.println("Effect: PolkaDots"); this->polkadotFill(this->Wheel(TrueRandom.random(0,255)),this->Wheel(TrueRandom.random(0,255)),500); }	
-	// 	if (selector == 8) { Serial.println("Effect: SparkleRainbow Bubblegum IceCream"); this->SparkleRainbow(20,10); }
-	// 	if (selector == 9) { Serial.println("Effect: Rainbow Strobe"); this->rainbowStrobe(500); }
-	// 	if (selector == 10) { Serial.println("Effect: SparkleChaos1"); this->SparkleChaos1(); }
-	// 	
-	// 	} else { phase = 1; }
-	// 		
-	// 	// DoubleRainbowSparkle(20,20,100);
-	// 	// Malfunction
-	// 	// Butterfly
-	// 	// strobe white over rainbow bg
-	// }
 }
 
 //Nuff said, only duration, not speed can be set (made this 15 minutes before you took my balls.)
