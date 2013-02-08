@@ -5,23 +5,13 @@
 #include "Grid.h"
 
 Creamery::Creamery(Grid *g) {
-// Creamery::Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Adafruit_WS2801(n, dpin, cpin, order) {
 	
+	this->grid = g;		
 	
-	// this->total = this->grid->getTotal();
-	
-	this->grid = g;	
-	
-	// Controller vars
-	// this->timer = 0;
-	// this->phase = 0;
-	// this->interval = 0;
-	// this->selector = 0;	
-	
-	
-	// Grid vars
-	this->division = 12;
-	
+	this->selection = selection;
+  	this->frequency = frequency;
+  	this->last_execution = 0;
+  	
 	// Setup some base colors variables to use for things like polkadot
 	this->primary = this->RandomWheel();
 	this->secondary = this->RandomWheel();
@@ -30,7 +20,7 @@ Creamery::Creamery(Grid *g) {
 }
 
 void Creamery::step() {   
-
+	
 }
 
 //Nuff said, only duration, not speed can be set (made this 15 minutes before you took my balls.)
@@ -460,15 +450,53 @@ void Creamery::rainbowCycle(uint8_t wait) {
 
 // fill the dots one after the other with said color
 // good for testing purposes
-void Creamery::colorWipe(uint32_t c, uint8_t wait) {
-  int i;
-  
-  for (i=0; i < this->grid->getTotal()/division; i++) {
-      this->q(i, c);
-      this->grid->show();
-      delay(wait);
-  }
+void Creamery::colorWipe(uint32_t c,uint32_t d,uint8_t wait) {
+  	int i;  
+
+	Serial.println("Beginning Effect ColorWipe...");
+	// We do this at the start....
+	// if (grid->orientation() == horizontal) {
+	// 	int division = grid->panelY();
+	// } else {
+	// 	int division = panelX or panelY
+	// }
+
+	// /HARDCODE
+	// division = 5;
+
+	if (this->direction == desc) {
+		// Descending
+		for (i=0; i<this->grid->getTotal()/this->grid->pixelsY; i++) {		
+			this->grid->q(i, c);
+			this->grid->show();
+			delay(wait);
+	  	}
+			
+	} else {
+		// Ascending
+		for (i=this->grid->getTotal()/this->grid->panelsX;i>=0;i--) {
+			
+			this->grid->q(i, c);
+			this->grid->show();
+			delay(wait);
+	  	}
+	  	
+	}
+
+	
+	
 }
+// // fill the dots one after the other with said color
+// // good for testing purposes
+// void Creamery::colorWipe(uint32_t c, uint8_t wait) {
+//   int i;
+//   
+//   for (i=0; i < this->grid->getTotal()/division; i++) {
+//       this->q(i, c);
+//       this->grid->show();
+//       delay(wait);
+//   }
+// }
 
 // fill the entire strip with said color
 // good for testing purposes
