@@ -13,27 +13,30 @@ SoundStrip::SoundStrip(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : 
 	this->timer = 0;
 	this->phase = 0;
 	this->interval = 0;
-	// iduration = 15000;	
-	// pduration = 900000; 15 Minutes
+
+	// This will become the current effect parameter.
 	this->selector = 0;
 	
 	// === Pattern vars ===
 	
+	
+	
 	// === Grid / Pattern vars === 
 	// Division sets the strand mode. 1 is regular, 2 is Mirror, 3 is Triangle (not added yet), 4 is Radial.
 	this->mode = panel;
+	this->orientation = vertical;
+	this->direction = asc;
+			
 	this->panelsX = 12;
 	this->panelsY = 1;
 	this->pixelsX = 1;
 	this->pixelsY = 12;
 	this->division = 12;
-	this->orientation = 1;	
 
 
 	// Colors:
 	this->primary = this->RandomWheel();
 	this->secondary = this->RandomWheel();
-	
 
 	// Phase modifier = phase * 
 	// %10
@@ -79,7 +82,7 @@ void SoundStrip::render() {
 		
 		// PolkadotCycle(RandomWheel(),RandomWheel(),100);
 		// FadeOut(10);
-		colorWipe(RandomWheel(),600);
+		colorWipe(RandomWheel(),asc,600);
 	} else {
 
 	  	if (this->timer > this->iduration*this->interval) {
@@ -90,13 +93,25 @@ void SoundStrip::render() {
 				Serial.print("interval * iduration: ");
 				Serial.println(this->interval*this->iduration);		
 			}
+			
+			// this->mode = getMode(root)
+			// this->direction = getDir(root)
+			// this->orientation = getOr(root);
+			// this->delay = getDelay(root);
+			// this->sustain = getSust(root);
+			// this->r = getR(root);
+			// this->g = getG(root);
+			// this->b = getB(root);
+			// this->a = getA(root);
+			
+			
 			// Check for Phase
 			if (this->timer > phase * pduration) {
 				phase++;
-			}
-		
+			}			
+			
 			// Increment interval
-	     	this->interval++;		
+	     	this->interval++;
 		
 			// This speeds us up as time goes on.
 			if (timer < 3*(60*(60*1000))) {
@@ -125,7 +140,19 @@ void SoundStrip::render() {
 		 	Serial.println(this->selector);
 
 		}
-
+		
+		// --- Pattern
+		// Color
+		// Polkadot
+		// Rainbow
+		// Chaos
+		
+		// -- Action
+		// Wipe
+		// Cycle		
+		// Sparkle 
+		// Strobe
+		// Pulse
 	
 		if (phase < 4) {		
 			if (selector == 0) { Serial.println("Effect: Sparkle"); this->Malfunction(); }
@@ -192,25 +219,39 @@ void SoundStrip::render() {
 
 // fill the dots one after the other with said color
 // good for testing purposes
-void SoundStrip::colorWipe(uint32_t c, uint8_t wait) {
+void SoundStrip::colorWipe(uint32_t c, uint32_t d,uint8_t wait) {
   	int i;  
-	
-	// if (orientation == horizontal) {
-	// 	division = panelX or panelY
+
+	Serial.println("Beginning Effect ColorWipe...");
+	// We do this at the start....
+	// if (grid->orientation() == horizontal) {
+	// 	int division = grid->panelY();
+	// } else {
+	// 	int division = panelX or panelY
 	// }
-	// if (direction == horizontal) {
-	// 	division = panelX or panelY
-	// }
 	
-	this->division = 3;
-	Serial.println(this->numPixels());
+
+	if (direction == desc) {
+		// Descending
+		for (i=0; i<this->numPixels()/this->division; i++) {		
+			q(i, c);
+			this->show();
+			delay(wait);
+	  	}
+			
+	} else {
+		// Ascending
+		for (i=this->numPixels()/this->division;i>=0;i--) {
+			
+			q(i, c);
+			this->show();
+			delay(wait);
+	  	}
+	  	
+	}
+
 	
-	Serial.println("Beginning ColorWipe...");
-  	for (i=0; i<this->numPixels()/this->division; i++) {		
-		q(i, c);
-		this->show();
-		delay(wait);
-  	}
+	
 }
 
 // Translate the LED position to Mirror the strand output. This is a custom mapping for a DJ Booth
@@ -267,10 +308,7 @@ void SoundStrip::q(int pos, uint32_t color) {
 		// radial(pos,color);
 	}	
 	if (this->mode == panel) { // Make each panel do the same thing.
-		int p;
-		
-		//HARDCODE!///
-		this->orientation = horizontal; ///
+		int p;	
 		// Serial.println(this->orientation);
 		
 		if (this->orientation == horizontal) {
