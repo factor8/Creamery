@@ -9,6 +9,9 @@ class Grid;
 
 class Creamery {
   public:
+	
+		// Alignment,Direction,Pattern Enumeration
+		enum {asc,desc,horizontal,vertical,strand,panel,mirrored};	
 		
 		Creamery(Grid *g);			
     	// Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
@@ -54,7 +57,7 @@ class Creamery {
 			rainbowStrobe(uint8_t wait),
 			rainbowCycle(uint8_t wait),
 		
-			colorWipe(uint32_t c, uint8_t wait),
+			colorWipe(uint32_t c, uint32_t d, uint8_t wait),
 			colorFill(uint32_t c);
 	
 	

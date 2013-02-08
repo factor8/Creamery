@@ -8,9 +8,10 @@ Creamery::Creamery(Grid *g) {
 	
 	this->grid = g;		
 	
-	this->selection = selection;
-  	this->frequency = frequency;
-  	this->last_execution = 0;
+	// this->selection = selection;
+  	// this->frequency = frequency;
+  	// this->last_execution = 0;
+	// this->direction = 
   	
 	// Setup some base colors variables to use for things like polkadot
 	this->primary = this->RandomWheel();
@@ -454,17 +455,10 @@ void Creamery::colorWipe(uint32_t c,uint32_t d,uint8_t wait) {
   	int i;  
 
 	Serial.println("Beginning Effect ColorWipe...");
-	// We do this at the start....
-	// if (grid->orientation() == horizontal) {
-	// 	int division = grid->panelY();
-	// } else {
-	// 	int division = panelX or panelY
-	// }
-
+	
 	// /HARDCODE
-	// division = 5;
 
-	if (this->direction == desc) {
+	if (d == desc) {
 		// Descending
 		for (i=0; i<this->grid->getTotal()/this->grid->pixelsY; i++) {		
 			this->grid->q(i, c);
