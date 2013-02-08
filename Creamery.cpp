@@ -1,15 +1,16 @@
 #include "Adafruit_WS2801.h"
 #include "Creamery.h"
-#include "TrueRandom.h"
-#include "Easing.h"
+// #include "TrueRandom.h"
+// #include "Easing.h"
 #include "Grid.h"
 
-// Creamery::Creamery(Grid *grid) {
-Creamery::Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Adafruit_WS2801(n, dpin, cpin, order) {
+Creamery::Creamery(Grid *g) {
+// Creamery::Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Adafruit_WS2801(n, dpin, cpin, order) {
 	
-	// this->total = this->numPixels();
 	
-	// this->grid = grid;
+	// this->total = this->grid->getTotal();
+	
+	this->grid = g;	
 	
 	// Controller vars
 	// this->timer = 0;
@@ -27,7 +28,6 @@ Creamery::Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order) : Adaf
 	this->tertiary = this->RandomWheel();
 	
 }
-///Do we need deconstructor?
 
 void Creamery::step() {   
 
@@ -37,18 +37,18 @@ void Creamery::step() {
 void Creamery::strobe(uint8_t runs){
   int i;
   int r;
-  int total = this->numPixels();
+  int total = this->grid->getTotal();
   for(r=0;r<runs;r++) {
      for(i=0;i<total;i++){
-       this->setPixelColor(i, this->rgba(255,255,255,0.2));
+       this->grid->q(i, this->rgba(255,255,255,0.2));
      }
-     this->show();
+     this->grid->show();
      delay(25);
      
      for(i=0;i<total;i++){
-       this->setPixelColor(i, this->Color(0,0,0));
+       this->grid->q(i, this->Color(0,0,0));
      }
-     this->show();
+     this->grid->show();
      delay(100);
   }
 }
@@ -77,7 +77,7 @@ void Creamery::Malfunction() {
 void Creamery::PolkadotCycle(uint32_t c, uint32_t d, uint8_t wait) {
 
   for (int j=0; j < 256 * 5; j++) {     // 5 cycles of all 25 colors in the wheel
-    for (int i=0; i < this->numPixels()/division; i++) {
+    for (int i=0; i < this->grid->getTotal()/division; i++) {
 
 			if ((i%2)==0) {
 	        	this->q(i, c);
@@ -86,9 +86,9 @@ void Creamery::PolkadotCycle(uint32_t c, uint32_t d, uint8_t wait) {
 	      	}
 	    }
 			
-      // this->q(i, this->Wheel( ((i * 256 / this->numPixels()) + j) % 256) );
+      // this->q(i, this->Wheel( ((i * 256 / this->grid->getTotal()) + j) % 256) );
     }  
-    this->show();   // write all the pixels out
+    this->grid->show();   // write all the pixels out
     delay(wait);
 	
 }
@@ -98,15 +98,15 @@ void Creamery::PolkadotCycle(uint32_t c, uint32_t d, uint8_t wait) {
 void Creamery::polkadotFill(uint32_t c, uint32_t d, uint8_t wait) {
   int i;
   
-  for (i=0; i < this->numPixels(); i++) {
+  for (i=0; i < this->grid->getTotal(); i++) {
       
       if ((i%2)==0) {
-        this->setPixelColor(i, c);
+        this->grid->q(i, c);
       } else {
-        this->setPixelColor(i, d);      
+        this->grid->q(i, d);      
       }
   }
-  this->show();
+  this->grid->show();
   delay(wait);  
 }  
 
@@ -114,7 +114,7 @@ void Creamery::PolkadotPulse(uint32_t c, uint32_t d, uint8_t wait, uint8_t susta
   
   	int i;
   	double alpha;
-  	int total = this->numPixels()/division;
+  	int total = this->grid->getTotal()/division;
   
 	for(alpha=0;alpha<1;alpha=alpha+0.01) {
 	    for(i=0;i<total;i++)  {
@@ -124,23 +124,23 @@ void Creamery::PolkadotPulse(uint32_t c, uint32_t d, uint8_t wait, uint8_t susta
 	        	this->q(i, this->Color(d,alpha));      
 	      	}
 	    }
-	    this->show();
+	    this->grid->show();
 	    delay(wait);
   	}
-  	// this->show();
+  	// this->grid->show();
 	
 	delay(sustain);	
 	FadeOut(0);
 	// for(alpha=1;alpha>0;alpha=alpha-0.01) {
 	//       	if ((i%2)==0) {
-	//        		this->setPixelColor(i, this->Color(c,alpha));
+	//        		this->grid->q(i, this->Color(c,alpha));
 	//      	} else {
-	//        		this->setPixelColor(i, this->Color(d,alpha));      
+	//        		this->grid->q(i, this->Color(d,alpha));      
 	//      	}
-	//     	this->show();
+	//     	this->grid->show();
 	//     	delay(wait);
 	//   	}
-  	// this->show();
+  	// this->grid->show();
 
 }
 
@@ -165,11 +165,11 @@ void Creamery::SparkleChaos1(){
 
 
 
-//Builds a sparkle faster and then slows it down./
-void Creamery::FasterSlower(){
-  SparkleFaster(500);
-  SparkleSlower(500);
-}
+/// /Builds a sparkle faster and then slows it down./
+// void Creamery::FasterSlower(){
+//   SparkleFaster(500);
+//   SparkleSlower(500);
+// }
 
 void Creamery::RainbowPulse(uint8_t wait) {
 	
@@ -205,88 +205,88 @@ void Creamery::FadeInOutRandom(uint8_t wait){
 void Creamery::FadeInAll(uint32_t color, uint8_t wait){
   int i;
   double alpha;
-  int total = this->numPixels();
+  int total = this->grid->getTotal();
   
   for(alpha=0;alpha<1;alpha=alpha+0.01) {
     for(i=0;i<total;i++)  {
-       this->setPixelColor(i, this->Color(color,alpha)); 
+       this->grid->q(i, this->Color(color,alpha)); 
     }
-    this->show();
+    this->grid->show();
     delay(wait);
   }
-  this->show();
+  this->grid->show();
 }
 
 void Creamery::FadeOutAll(uint32_t color, uint8_t wait){
   int i;
   double alpha;
-  int total = this->numPixels();
+  int total = this->grid->getTotal();
   
   for(alpha=1;alpha>0;alpha=alpha-0.01) {
     for(i=0;i<total;i++)  {
-       this->setPixelColor(i,this->Color(color,alpha)); 
+       this->grid->q(i,this->Color(color,alpha)); 
     }
-    this->show();
+    this->grid->show();
     delay(wait);
   }
-  this->show();
+  this->grid->show();
 }
 
 void Creamery::FadeInSparkles(uint32_t color, uint8_t wait){
   int i;
   double alpha;
-  int total = this->numPixels();
+  int total = this->grid->getTotal();
   
   for(alpha=0;alpha<0.25;alpha=alpha+0.01) {
     for(i=0;i<total;i++)  {
-      Sparkle(this->Wheel(color,alpha), TrueRandom.random(1,25), 25);
+      Sparkle(this->Wheel(color,alpha), random(1,25), 25);
     }
-    this->show();
+    this->grid->show();
     delay(wait);
   }
-  this->show();
+  this->grid->show();
 }
 
 void Creamery::FadeOutSparkles(uint8_t r, uint8_t g, uint8_t b, uint8_t wait){
   int i;
   double alpha;
-  int total = this->numPixels();
+  int total = this->grid->getTotal();
   
   for(alpha=0.25;alpha>0;alpha=alpha-0.01) {
     for(i=0;i<total;i++)  {
-       Sparkle(this->rgba(r,g,b,alpha), TrueRandom.random(1,25), 25);
+       Sparkle(this->rgba(r,g,b,alpha), random(1,25), 25);
     }
-    this->show();
+    this->grid->show();
     delay(wait);
   }
-  this->show();
+  this->grid->show();
 }
 
 //This is the exact same thing as Sparkle except with random colors.
 
 void Creamery::SparkleRainbow(uint8_t density, uint8_t wait){
-    int total=this->numPixels();
+    int total=this->grid->getTotal();
     int r; 
     int i;
     int pixel; 
 
   //Set all pixels to bg
-  for(i=0; i < this->numPixels(); i++ ) {
+  for(i=0; i < this->grid->getTotal(); i++ ) {
     //Set color
-    this->setPixelColor(i, this->Color(0,0,0));
+    this->grid->q(i, this->Color(0,0,0));
   }
 //  update Lights
-  this->show();
+  this->grid->show();
   
   //Pick at random x number of times (x = density)
   for( r=0; r < density; r++ )  {
     //Pick pixel
-   pixel = TrueRandom.random(1,total);
-	this->setPixelColor(pixel, this->RandomWheel());
-   // this->setPixelColor(pixel, this->Color(this->R(0,255), this->R(0,255), this->R(0,255)));
+   pixel = random(1,total);
+	this->grid->q(pixel, this->RandomWheel());
+   // this->grid->q(pixel, this->Color(this->R(0,255), this->R(0,255), this->R(0,255)));
   }
   //Update lights
-  this->show();
+  this->grid->show();
   
   delay(wait);
  //
@@ -302,27 +302,27 @@ void Creamery::DoubleRainbowSparkle(uint8_t density, uint8_t wait, uint8_t susta
 
 //3 Parameter SPARKLE
 void Creamery::Sparkle(uint32_t color, uint8_t density, uint8_t wait){
-    int total=this->numPixels();
+    int total=this->grid->getTotal();
     int r; 
     int i;
     int pixel; 
 
   //Set all pixels to bg
-  for(i=0; i < this->numPixels(); i++ ) {
+  for(i=0; i < this->grid->getTotal(); i++ ) {
     //Set color
-    this->setPixelColor(i, this->Color(0,0,0));
+    this->grid->q(i, this->Color(0,0,0));
   }
 //  update Lights
-  this->show();
+  this->grid->show();
   
   //Pick at random x number of times (x = density)
   for( r=0; r < density; r++ )  {
     //Pick pixel
-   pixel = TrueRandom.random(1,total);
-   this->setPixelColor(pixel, color);
+   pixel = random(1,total);
+   this->grid->q(pixel, color);
   }
   //Update lights
-  this->show();
+  this->grid->show();
   
   delay(wait);
  //
@@ -330,35 +330,35 @@ void Creamery::Sparkle(uint32_t color, uint8_t density, uint8_t wait){
 
 //5 Parameter SPARKLE
 void Creamery::Sparkle(uint32_t color, uint8_t density, uint8_t wait, uint8_t sustain, uint32_t bg){
-    int total=this->numPixels();
+    int total=this->grid->getTotal();
     int r; 
     int i;
     int pixel; 
 
   //Set all pixels to bg
-  for(i=0; i < this->numPixels(); i++ ) {
+  for(i=0; i < this->grid->getTotal(); i++ ) {
     //Set color
-    this->setPixelColor(i, bg);
+    this->grid->q(i, bg);
   }
   delay(wait);
   //  update Lights
-  this->show();
+  this->grid->show();
   
   //Pick at random x number of times (x = density)
   for( r=0; r < density; r++ )  {
     //Pick pixel
-   pixel = TrueRandom.random(1,total);
-   this->setPixelColor(pixel, color);
+   pixel = random(1,total);
+   this->grid->q(pixel, color);
   }
   //Update lights
-  this->show();
+  this->grid->show();
   
   delay(sustain);
  //
 }
 
 void Creamery::SparkleFill(uint32_t color, uint8_t density, uint8_t wait){
-  int total=this->numPixels();
+  int total=this->grid->getTotal();
   int r; 
   int i;
   int pixel; 
@@ -366,28 +366,28 @@ void Creamery::SparkleFill(uint32_t color, uint8_t density, uint8_t wait){
   //Pick at random x number of times (x = density)
   for( r=0; r < density; r++ )  {
     // Pick pixel
-   pixel = TrueRandom.random(1,total);
-   this->setPixelColor(pixel, color);
+   pixel = random(1,total);
+   this->grid->q(pixel, color);
   }
   //Update lights
-  this->show();
+  this->grid->show();
   
   delay(wait);
 }
 
-void Creamery::SparkleFaster(uint8_t duration){
-  int go;
-  for(go=0;go<100;go++) {
-    this->SinglePixel( Easing::easeOutSine(go, 80, 0, duration) );
-  }
-}
+// void Creamery::SparkleFaster(uint8_t duration){
+//   int go;
+//   for(go=0;go<100;go++) {
+//     this->SinglePixel( Easing::easeOutSine(go, 80, 0, duration) );
+//   }
+// }
 
-void Creamery::SparkleSlower(uint8_t duration){
-  int go;
-  for(go=0;go<100;go++) {
-    this->SinglePixel( Easing::easeInSine(go, 0, 80, duration) );
-  }
-}
+// void Creamery::SparkleSlower(uint8_t duration){
+//   int go;
+//   for(go=0;go<100;go++) {
+//     this->SinglePixel( Easing::easeInSine(go, 0, 80, duration) );
+//   }
+// }
 
 void Creamery::SinglePixel(uint8_t DELAY){
  this->Sparkle(this->Color(255,255,255), 1, DELAY);
@@ -398,9 +398,9 @@ void Creamery::CrazyPixel(uint32_t COLOR){
 }
 
 void Creamery::SparkleRandom(){  
-  int COLOR = this->Color(TrueRandom.random(0,255), TrueRandom.random(0,255), TrueRandom.random(0,255));
-  int DENSITY = TrueRandom.random(1,30);
-  int DELAY = TrueRandom.random(25,160);
+  int COLOR = this->Color(random(0,255), random(0,255), random(0,255));
+  int DENSITY = random(1,30);
+  int DELAY = random(25,160);
   
   this->Sparkle(COLOR, DENSITY, DELAY);  
 }
@@ -409,11 +409,11 @@ void Creamery::ColorJump(uint8_t DELAY){
   int i;
   uint32_t COLOR;
   COLOR = this->RandomColor();
-  for(i=0;i<this->numPixels();i++) { this->setPixelColor(i, COLOR); }
-  this->show();
+  for(i=0;i<this->grid->getTotal();i++) { this->grid->q(i, COLOR); }
+  this->grid->show();
   delay(DELAY/2);
-  for(i=0;i<this->numPixels();i++) { this->setPixelColor(i, this->Color(0,0,0)); }
-  this->show();
+  for(i=0;i<this->grid->getTotal();i++) { this->grid->q(i, this->Color(0,0,0)); }
+  this->grid->show();
   delay(DELAY/2);
 }
 
@@ -421,10 +421,10 @@ void Creamery::rainbow(uint8_t wait) {
   int i, j;
    
   for (j=0; j < 256; j++) {     // 3 cycles of all 256 colors in the wheel
-    for (i=0; i < this->numPixels()/division; i++) {
+    for (i=0; i < this->grid->getTotal()/division; i++) {
       this->q(i, this->Wheel( (i + j) % 255));
     }  
-    this->show();   // write all the pixels out
+    this->grid->show();   // write all the pixels out
     delay(wait);
   }
 }
@@ -432,10 +432,10 @@ void Creamery::rainbow(uint8_t wait) {
 void Creamery::rainbowStrobe(uint8_t wait) {
   	int i, j;
    
-    for (i=0; i < this->numPixels()/division; i++) {
+    for (i=0; i < this->grid->getTotal()/division; i++) {
       this->q(i, RandomWheel());
     }  
-    this->show();   // write all the pixels out
+    this->grid->show();   // write all the pixels out
     delay(wait);
 }
 
@@ -446,14 +446,14 @@ void Creamery::rainbowCycle(uint8_t wait) {
   int i, j;
   
   for (j=0; j < 256 * 5; j++) {     // 5 cycles of all 25 colors in the wheel
-    for (i=0; i < this->numPixels()/division; i++) {
+    for (i=0; i < this->grid->getTotal()/division; i++) {
       // tricky math! we use each pixel as a fraction of the full 96-color wheel
-      // (thats the i / this->numPixels() part)
+      // (thats the i / this->grid->getTotal() part)
       // Then add in j which makes the colors go around per pixel
       // the % 96 is to make the wheel cycle around
-      this->q(i, this->Wheel( ((i * 256 / this->numPixels()) + j) % 256) );
+      this->q(i, this->Wheel( ((i * 256 / this->grid->getTotal()) + j) % 256) );
     }  
-    this->show();   // write all the pixels out
+    this->grid->show();   // write all the pixels out
     delay(wait);
   }
 }
@@ -463,9 +463,9 @@ void Creamery::rainbowCycle(uint8_t wait) {
 void Creamery::colorWipe(uint32_t c, uint8_t wait) {
   int i;
   
-  for (i=0; i < this->numPixels()/division; i++) {
+  for (i=0; i < this->grid->getTotal()/division; i++) {
       this->q(i, c);
-      this->show();
+      this->grid->show();
       delay(wait);
   }
 }
@@ -475,10 +475,10 @@ void Creamery::colorWipe(uint32_t c, uint8_t wait) {
 void Creamery::colorFill(uint32_t c) {
   int i;
   
-  for (i=0; i < this->numPixels(); i++) {
+  for (i=0; i < this->grid->getTotal(); i++) {
       this->q(i, c);
   }
-  this->show();
+  this->grid->show();
 }
 
 /* Transition functions */
@@ -487,7 +487,7 @@ bool Creamery::trans(uint16_t i, uint32_t newcolor, uint8_t wait) {
 	// rgb = current, nrgb = new, trgb = transition.
 	bool rflag,gflag,bflag=false;
 	uint8_t r,g,b,nr,ng,nb;
-	uint32_t c = this->getPixelColor(i);	
+	uint32_t c = this->grid->getPixelColor(i);	
 	r = extractRed(c);
 	g = extractGreen(c);
 	b = extractBlue(c);
@@ -524,8 +524,8 @@ bool Creamery::trans(uint16_t i, uint32_t newcolor, uint8_t wait) {
 	
 	if (rflag && gflag && bflag) { return true; }
 	
-	this->setPixelColor(i,Color(r,g,b));
-	this->show();
+	this->grid->q(i,Color(r,g,b));
+	this->grid->show();
 	
 	return false;
 	
@@ -533,16 +533,16 @@ bool Creamery::trans(uint16_t i, uint32_t newcolor, uint8_t wait) {
 void Creamery::FadeOut(uint8_t wait) {
   int i;
   double alpha;
-  int total = this->numPixels();
+  int total = this->grid->getTotal();
 
   for(alpha=1;alpha>0;alpha=alpha-0.01) {
     for(i=0;i<total;i++)  {
-       this->setPixelColor(i,this->Color(this->getPixelColor(i),alpha)); 
+       this->grid->q(i,this->Color(this->grid->getPixelColor(i),alpha)); 
     }
-    this->show();
+    this->grid->show();
     delay(wait);
   }
-  this->show();
+  this->grid->show();
 
 }
 
@@ -551,7 +551,7 @@ void Creamery::FadeOut(uint8_t wait) {
 // "Queue" method to translate pixel positions for standard, mirrored, and radial modes.
 void Creamery::q(int pos, uint32_t color) {		
 	if (division == 1) {
-		this->setPixelColor(pos,color);
+		this->grid->q(pos,color);
 	} else if (division == 2) {
 		// left/right mirror mode.
 		// mirror(pos,color);
@@ -560,24 +560,24 @@ void Creamery::q(int pos, uint32_t color) {
 		// radial(pos,color);
 	} else if (division == 12) { // Make each panel do the same thing.
 		int p,i;
-		for (i=0 ;i<this->numPixels()/division;i++) {
+		for (i=0 ;i<this->grid->getTotal()/division;i++) {
 			p = (i%2) ? p = (12*i)+11-(pos) : p = (i*12)+(pos);
-			this->setPixelColor(p, color);		
+			this->grid->q(p, color);		
 		}
 	}			 
 }
 
 //Shorter random function, static helper. 
 uint8_t Creamery::R(uint8_t from, uint8_t to){
- return TrueRandom.random(from, to);
+ return random(from, to);
 } 
 
 uint32_t Creamery::RandomColor(){
-   return this->Color(TrueRandom.random(0,255), TrueRandom.random(0,255), TrueRandom.random(0,255));
+   return this->Color(random(0,255), random(0,255), random(0,255));
 }
 
 uint32_t Creamery::RandomWheel() {	
-	return Wheel(TrueRandom.random(0,255)%255);		
+	return Wheel(random(0,255)%255);		
 }
 
 uint32_t Creamery::rgba(byte r, byte g, byte b, double a) {

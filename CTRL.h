@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <Creamery.h>
-#include <Easing.h>
 
 /*
  * The color wipe effect changes each pixel in turn
@@ -8,28 +7,36 @@
  */
 
 // Defined elswhere:
-// class Grid;
+class Adafruit_WS2801;
+class Grid;
+class Creamery;
 
-class CTRL : public Creamery {
-  public:
+class CTRL {
+  	public:
 	
 		// Alignment,Direction,Pattern Enumeration
 		enum {asc,desc,	horizontal,vertical,	strand,panel,mirrored};			// Belongs in Controller or Pattern
 		
-    	CTRL(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
+		CTRL(Adafruit_WS2801 *strip,int panelsX, int panelsY,int pixelsX,int pixelsY);
+    	// CTRL(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
 		
-		int pixels[];
+		Adafruit_WS2801 *strip;
+		Grid *grid;
+		Creamery *creamery;
 	
 		void
 			colorWipe(uint32_t c, uint32_t d, uint8_t wait),
-			
+
+			// Route(),
+			// ReadJsonBytes(),
+			// ConnectToSocket(),
+
 			mirror(int pos, uint32_t color),
-			grid(),
 			q(int pos, uint32_t color),
+			step(),
 			render();
 
-
-	  private:
+	private:
 		
 		// controller vars:
 		long timer; 													// 
@@ -59,6 +66,18 @@ class CTRL : public Creamery {
 		uint32_t 
 			primary,
 			secondary;
+
+		// This is for when we merge in the controller	//
+		// String 
+		// 	parseMethod(aJsonObject* root);
+		// uint8_t 
+		// 	parseOptionNumber(aJsonObject* root, char* target);
+		// char* 
+		// 	parseOptionString(aJsonObject* root, char* target),
+		// 	parseOptions(aJsonObject* root);
+		// 	
+		// int 
+		// 	parseClientId(aJsonObject* root);
 			
 };
 

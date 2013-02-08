@@ -7,11 +7,11 @@
  */
 class Grid;
 
-class Creamery : public Adafruit_WS2801 {
+class Creamery {
   public:
 		
-		// Creamery::Creamery(Grid *grid);			
-    	Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
+		Creamery(Grid *g);			
+    	// Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
 		
 		Grid *grid;
 		
