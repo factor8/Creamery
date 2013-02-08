@@ -13,8 +13,7 @@ class Creamery {
 		// Alignment,Direction,Pattern Enumeration
 		enum {asc,desc,horizontal,vertical,strand,panel,mirrored};	
 		
-		Creamery(Grid *g);			
-    	// Creamery(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t order=WS2801_RGB);
+		Creamery(Grid *g);
 		
 		Grid *grid;
 		
@@ -65,13 +64,14 @@ class Creamery {
 		unsigned const static long iduration = 30000;  // Controller
 		
 		unsigned long  	//Controller
-			timer,			 	//Controller
-			interval,			//Controller
-			phase;				//Controller
 
-		int test,				//Controller
-			selector,			//Controller
+		int
+			frequency,
+			sustain,
 			intensity,		//Effects
+			direction,
+			orientation,
+			last_execution,
 			division;			//Grid or Effects
 	
 		uint32_t 	// Define some fallback colors.
@@ -90,8 +90,7 @@ class Creamery {
 			extractBlue(uint32_t c);		      // Effects
 
 		void 
-			extractColor(),								// Effects	
-			q(int pos, uint32_t color);		// Grid
+			extractColor();								// Effects	
 		
 		uint32_t 		
 			RandomColor(), 															// Effects > 
