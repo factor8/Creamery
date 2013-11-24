@@ -48,7 +48,7 @@
 // }	
 // 
 // 
-// void Audio::rainbowPulse(uint8_t wait)
+// void Audio::rainbowPulse(uint32_t wait)
 // {
 // 	this->readSpectrum();
 // 
@@ -75,7 +75,7 @@
 //   }
 // }
 // 
-// void Audio::showSpectrum(uint8_t wait)
+// void Audio::showSpectrum(uint32_t wait)
 // {
 // 	this->readSpectrum();
 // 	
@@ -113,7 +113,7 @@
 // }
 // 
 // // foreach spectrum pick a color and run an alpha intensity.
-// void Audio::rainbowSpectrum(uint8_t wait)
+// void Audio::rainbowSpectrum(uint32_t wait)
 // {
 // 	readSpectrum();
 // 
@@ -154,7 +154,7 @@
 // 
 // }
 // 
-// void Audio::RainbowLevel(uint8_t wait)
+// void Audio::RainbowLevel(uint32_t wait)
 // {
 // 	readSpectrum();
 // 

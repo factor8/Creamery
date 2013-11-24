@@ -21,29 +21,31 @@ class Creamery {
 		void 
 			step(),
 			strobe(uint8_t runs),
-			polkadotFill(uint32_t c, uint32_t d, uint8_t wait),
-			PolkadotPulse(uint32_t c, uint32_t d, uint8_t wait, uint8_t sustain),
-			PolkadotCycle(uint32_t c, uint32_t d, uint8_t wait),
-			RainbowPulse(uint8_t wait),
-			ColorPulse(uint32_t color, uint8_t wait),
+			polkadotFill(uint32_t c, uint32_t d, uint32_t wait),
+			PolkadotPulse(uint32_t c, uint32_t d, uint32_t wait, uint8_t sustain),
+			PolkadotCycle(uint32_t c, uint32_t d, uint32_t wait),
+			RainbowPulse(uint32_t wait),
+			ColorPulse(uint32_t color, uint32_t wait),
 			SparkleChaos1(),
 			FasterSlower(),
-			FadeInOutWhite(uint8_t wait),
-			FadeInOutRandom(uint8_t wait),
-			FadeInAll(uint32_t color, uint8_t wait),
-			FadeOutAll(uint32_t color, uint8_t wait),
+			FadeInOutWhite(uint32_t wait),
+			FadeInOutRandom(uint32_t wait),
+			FadeInAll(uint32_t color, uint32_t wait),
+			FadeOutAll(uint32_t color, uint32_t wait),
 		
-			// SingleWipe(),
+			singlePulseWipe(uint32_t c, uint16_t dir, uint16_t f, uint16_t wait),
+			singlePulse(uint8_t n,uint32_t c, uint16_t f, uint16_t wait),
+			nPulse(uint8_t n,uint32_t c, uint16_t f, uint16_t wait),
 		
-			FadeInSparkles(uint32_t color, uint8_t wait),
-			FadeOutSparkles(uint8_t r, uint8_t g, uint8_t b, uint8_t wait),
+			FadeInSparkles(uint32_t color, uint32_t wait),
+			FadeOutSparkles(uint8_t r, uint8_t g, uint8_t b, uint32_t wait),
 			RandomWipeWipeWipe(),
 			SlowFill(uint8_t r, uint8_t g, uint8_t b),
-			SparkleRainbow(uint8_t density, uint8_t wait),
-			DoubleRainbowSparkle(uint8_t density, uint8_t wait, uint8_t sustain),
-			Sparkle(uint32_t color, uint8_t density, uint8_t wait),
-			Sparkle(uint32_t color, uint8_t density, uint8_t wait, uint8_t sustain, uint32_t bg),
-			SparkleFill(uint32_t color, uint8_t density, uint8_t wait),
+			SparkleRainbow(uint8_t density, uint32_t wait),
+			DoubleRainbowSparkle(uint8_t density, uint32_t wait, uint8_t sustain),
+			Sparkle(uint32_t color, uint8_t density, uint32_t wait),
+			Sparkle(uint32_t color, uint8_t density, uint32_t wait, uint8_t sustain, uint32_t bg),
+			SparkleFill(uint32_t color, uint8_t density, uint32_t wait),
 			SparkleFaster(uint8_t duration),
 			SparkleSlower(uint8_t duration),
 			SinglePixel(uint8_t DELAY),
@@ -52,13 +54,13 @@ class Creamery {
 			ColorJump(uint8_t DELAY),
 			ButterflyEffect(),
 			Malfunction(),
-			FadeOut(uint8_t wait),
+			FadeOut(uint32_t wait),
 		
-			rainbow(uint8_t wait),
-			rainbowStrobe(uint8_t wait),
-			rainbowCycle(uint8_t wait),
+			rainbow(uint32_t wait),
+			rainbowStrobe(uint32_t wait),
+			rainbowCycle(uint32_t wait),
 		
-			colorWipe(uint32_t c, uint32_t d, uint8_t wait),
+			colorWipe(uint32_t c, uint32_t d, uint32_t wait),
 			colorFill(uint32_t c);
 	
 	
@@ -83,7 +85,7 @@ class Creamery {
 
 
 		bool // Currently unsure about this one. Attempt at making transitions work.
-			trans(uint16_t i, uint32_t newcolor, uint8_t wait);
+			trans(uint16_t i, uint32_t newcolor, uint32_t wait);
 
 		uint8_t 
 			R(uint8_t from, uint8_t to),			// Random Number Shortcut // Util.

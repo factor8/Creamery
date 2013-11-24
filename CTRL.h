@@ -23,10 +23,35 @@ class CTRL {
 		Adafruit_WS2801 *strip;
 		Grid *grid;
 		Creamery *creamery;
-	
+		
+		char* 
+			method;
+		
+		int 
+			total,
+			test,
+			debug,
+			selector,			
+			intensity,
+			frequency,
+			sustain,
+			density,
+			division,
+			panelsX,
+			panelsY,
+			pixelsX,
+			pixelsY,
+			r,g,b,a,
+			index,					
+			mode,	
+			orientation,
+			direction;
+		
+		
 		void
-			colorWipe(uint32_t c, uint32_t d, uint8_t wait),
-
+			colorWipe(uint32_t c, uint32_t d, uint32_t wait),
+			setSelector(uint16_t s),
+			
 			// Route(),
 			// ReadJsonBytes(),
 			// ConnectToSocket(),
@@ -39,37 +64,19 @@ class CTRL {
 	private:
 		
 		// controller vars:
-		long timer; 													// 
-		unsigned const static long pduration = 900000;		// phase duration
-		unsigned const static long iduration = 30000;		// interval duration
+		long timer; 													// timer clock
+		unsigned const static long pduration = 900000;		// phase duration ///MAGIC NUMBERS MUST DIE!!
+		unsigned long iduration;									// interval duration
 		
 		unsigned long 
 			interval,
 			phase;
 
-		
-		int 
-			total,
-			test,
-			debug,
-			selector,
-			intensity,
-			frequency,
-			density,
-			division,
-			panelsX,
-			panelsY,
-			pixelsX,
-			pixelsY,		
-			mode,	
-			orientation,
-			direction;
-
 		uint32_t 
 			primary,
 			secondary;
 
-		// This is for when we merge in the controller	//
+		// This is for when we merge in the controller	//		
 		// String 
 		// 	parseMethod(aJsonObject* root);
 		// uint8_t 
