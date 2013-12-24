@@ -1,0 +1,87 @@
+PSEUDO
+
+Commments
+
+Should we use classes or not?
+
+Do we want to do a latch style load like the pyrosphere or just use Adafruit_WS2801?
+
+Do we use PGMspace to store the mappings?
+How do we easily load different maps!? Grid class is hard to abstract and essentially changes for every project but is a core tranlsation all of the time. q();
+
+Serial Polling... how should we do it? How can we do it better than the pyrosphere.
+
+
+== Transitioning
+What if we assume each effect transitions and only turn it off when it shouldnt. 
+
+Effect completes - interval 0
+Get new selector
+Set future color grid - 
+Decompose colors
+Iterate through transition sequence
+
+
+== Movement within effects
+Setup easing of frequency within iteration
+
+== Pattern
+
+
+Grid has
+	mode,
+	orientation,
+	panelsX,
+	panelsY,
+	pixelsX,
+	pixelsY,
+	total;
+
+	strandq[],
+	panelsq[], // for criss-cross like the Fan or a Test Panel.
+	mirroredq[],
+	ceilingq[];			
+
+Controller has
+	total,
+	test,
+	debug,
+	selector,			
+	intensity,
+	frequency,
+	sustain,
+	density,
+	division,
+	r,g,b,a,
+	index,					
+	mode = chill, party, impress, static	
+	
+	now
+	then
+	pduration
+	iduration
+	interval,
+	phase;
+
+	orientation,
+	direction;
+
+
+Creamery
+
+	Each effect function will
+		update the current array colors (structs or 32bit...)
+		have certain triggers to know if it's done or just starting....
+		loop count decrement
+		default values / overrides
+
+
+
+Utilities
+
+	Color convert,
+	Random Color,
+	Random Wheel
+	Random Number
+	Random Pixel
+	Random Panel
