@@ -31,6 +31,8 @@ char increments[pixelsTotal][3];
 boolean DEBUG = 0; // Flag for debugging.
 uint8_t verbose = 0; // Flag for verbose debugging.
 boolean eflag = 1; // flag so that we can trigger only once per effect.
+
+// Transition Vars
 boolean will_transition = 1;
 boolean transitioning = 0;
 boolean updateInterval = 1;
@@ -62,6 +64,10 @@ uint32_t
  	secondary,
  	tertiary;
 
+// Serial Input Vars
+char messageBuffer[8]; 				// Can't forsee more than 8c*s as long as we stay away from long pattern titles.
+uint8_t  bufferIndex = 0; 		// This global manages the buffer index.
+uint8_t  readMode 	 = 0; 		// Wait
 
 // fill the dots one after the other with said color
 // good for testing purposes
@@ -270,6 +276,8 @@ void churn() {
 		selector = R(0,menu_count-1);
 		// selector = 4; ///hardcoding.	
 		
+		/// we need to account for user input changing the selector in the middle. 
+
 		/// Really we are supposed to have selector choose the 
 		/// settings for the effect and then declare the effect 
 		/// identifier within the selector statement 
@@ -278,6 +286,7 @@ void churn() {
 	    case 0:
 	    	// flavorWipe()
 	    	intervalCount = 1;
+	    	frequency = 60;
 	    	itermax = pixelsTotal;
 	    	updatePrimary(RandomWheel());
 
@@ -427,7 +436,55 @@ void q(uint16_t pos, uint32_t c) {
 // Serial Functions
 void serialRouting(char x) {
 
+		//Flags, set read mode., begin
+	
+	if 				( x == '!' ) 		{		readMode 	= 1;  	}					//Set Selector
+	else if 	( x == '@' ) 		{		readMode 	= 2;  	}	 				//Frame Duration
+	else if  	( x == '#' ) 		{		readMode 	= 3; 		}					//Frame Interval
+	else if   ( x == '+' ) 		{		readMode 	= 4;  	}					//Shift Register IDs, separated by comma (no whitespace)
+	else if   ( x == '-' ) 		{		readMode 	= 5;  	}					//Shift Register IDs, separated by comma (no whitespace)
+	else if   ( x == '~' ) 		{		readMode 	= 6;  	}					//System Mode 
+	else if   ( x == '*' ) 		{		readMode 	= 7;  	}					//System Mode 	
+	// else if  	( x == '/' ) 		{		getFiles(); 			}		
+	// else if  	( x == '?' ) 		{		statusUpdate(); 	}			
+	//Add custom flags here...
+	
+	//Finish up
+	else if 	(x == '.') 		{ 	//...
+		
+		//This will update the global variables accordingly.
+		switch(readMode){
+			case 1: 			setSelector();   		break;
+			// case 2:  			setDuration();  		break;
+			// case 3:  			setInterval();  		break;
+			// case 4: 			setValveOn(); 			break;
+			// case 5: 			setValveOff();			break;
+			// case 6: 			setMode();					break;			
+			// case 7: 			setActive();				break;						
+			default:  												break;	
+		}
+		
+			// lastSerialCMD = now; 						//Used for switching to autoPilot
+			readMode = 0;										//We're done reading. (until another.)
+			// autoPilot = false;
+		
+			bufferIndex = 0;
+					
+	}
+	else 										{ messageBuffer[bufferIndex++] = x; } 				//Magic.
+
 }
+void setSelector() {
+	// if (messageBuffer) /// do we need checking here? it's all going to change eventually.
+	/// Also we should probably reset our interval here.
+	selector = atoi(messageBuffer);
+	intervalCount = 0;
+	resetMessageBuffer();	
+}
+
+void resetMessageBuffer(){
+		memset( messageBuffer, '\0', sizeof(messageBuffer) );		
+	}
 
 void statusUpdate() {
 	// Serial.print("Is Dave there?");
