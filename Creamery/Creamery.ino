@@ -7,10 +7,10 @@
 
 // Grid DEF & Vars
 #define panelsX 1
-#define panelsY 18
+#define panelsY 12
 #define pixelsX 1
-#define pixelsY 1
-#define pixelsTotal 18
+#define pixelsY 3
+#define pixelsTotal 36
 
 // Instantiate Controller. Num Pix Automatically Generated.
 Adafruit_WS2801* strip = new Adafruit_WS2801(pixelsTotal, DATAPIN, CLOCKPIN);
@@ -273,8 +273,8 @@ void churn() {
 	if (interval >= intervalCount) {
 		interval = 0;
 		
-		selector = R(0,menu_count-1);
-		// selector = 4; ///hardcoding.	
+		// selector = R(0,menu_count-1);
+		selector = 4; ///hardcoding.	
 		
 		/// we need to account for user input changing the selector in the middle. 
 
