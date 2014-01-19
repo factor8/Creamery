@@ -6,10 +6,10 @@
 #define	CLOCKPIN	3 // Clock pin for serial communication to shift registers
 
 // Grid DEF & Vars
-#define panelsX 1
-#define panelsY 12
+#define panelsX 12
+#define panelsY 3
 #define pixelsX 1
-#define pixelsY 3
+#define pixelsY 1
 #define pixelsTotal 36
 
 // Instantiate Controller. Num Pix Automatically Generated.
@@ -26,23 +26,26 @@ uint32_t colors[pixelsTotal];
 uint32_t colors_future[pixelsTotal];
 uint8_t color_start[pixelsTotal][3]; // transition arrays. /// super testing
 uint8_t color_end[pixelsTotal][3];
-char increments[pixelsTotal][3];
+uint8_t increments[pixelsTotal][3];
+uint8_t inc_a,inc_b,inc_c;
 
-boolean DEBUG = 0; // Flag for debugging.
+extern boolean DEBUG = 0; // Flag for debugging.
+extern boolean eflag = 1; // flag so that we can trigger only once per effect.
 uint8_t verbose = 0; // Flag for verbose debugging.
-boolean eflag = 1; // flag so that we can trigger only once per effect.
 
 // Transition Vars
 boolean will_transition = 1;
 boolean transitioning = 0;
 boolean updateInterval = 1;
+boolean full_or_wheel = 0; // 0 for full color, 1 for wheel color. ///Not working yet...
 
 // CTRL Vars 
 long 
 	now,
 	then,
 	iduration,
-	pduration;
+	pduration,
+	autoPilot;
 
 uint16_t /// set defaults
 	iter,
@@ -58,6 +61,7 @@ uint16_t /// set defaults
 	mode;
 
 uint16_t transition_steps = 32;
+uint16_t current_transition_step = 0;
 
 uint32_t 
 	primary,
@@ -68,6 +72,9 @@ uint32_t
 char messageBuffer[8]; 				// Can't forsee more than 8c*s as long as we stay away from long pattern titles.
 uint8_t  bufferIndex = 0; 		// This global manages the buffer index.
 uint8_t  readMode 	 = 0; 		// Wait
+
+
+/// at some point we may need to create a function that returns pixelsTotal based on mode (panel/mirror/etc) 
 
 // fill the dots one after the other with said color
 // good for testing purposes
@@ -80,6 +87,8 @@ void flavorWipe() {
 	q(iter, primary);
 
 }
+
+// Just fill the strand with a color
 void flavorFill() {
 	if (DEBUG && eflag) {Serial.println("Beginning Effect flavorFill...");eflag=0;}
 	for (int i=0; i < pixelsTotal; i++) {
@@ -111,6 +120,60 @@ void rainbowCycle() {
 	}
 }
 
+// Moves colors along the strand. Frequency of 200 or lower is a nice pace. Should be rapid and exciting
+void colorCycle() {
+	if (DEBUG && eflag) {Serial.println("Beginning Effect colorCycle...");eflag=0;}
+
+	frequency = 200; /// unhardcode 
+	// itermax = 255;
+
+	// if (eflag) { colors_future = colors; }
+	
+	// Get a new random color.
+	if (full_or_wheel) {colors_future[0] = RandomColor();} else {colors_future[0] = RandomWheel();}
+
+	for (int i=0; i < pixelsTotal; i++) {
+		// Move the chain along but don't go to far.
+		if (i < pixelsTotal-1) {
+			colors_future[i+1] = colors[i];
+		}
+		// set the future colors.
+		q(i,colors_future[i]);			
+	}
+}
+
+void colorCycleFade() {
+	if (DEBUG && eflag) {Serial.println("Beginning Effect colorCycleFade...");eflag=0;}
+
+	frequency = 200; /// unhardcode
+	// itermax = 255;
+
+	// if (eflag) { colors_future = colors; }
+	
+	// Get a new random color.
+	// will_transition = 1;
+
+	if (!will_transition) {
+		colors_future[0] = RandomWheel();
+
+		for (int i=0; i < pixelsTotal; i++) {
+			// Move the chain along but don't go to far.
+			if (i < pixelsTotal-1) {
+				colors_future[i+1] = colors[i];
+			}
+			// set the future colors.
+			// q(i,colors_future[i]);			
+		}
+		will_transition = 1;
+	} else {
+
+		transition();
+	}
+
+	if (current_transition_step == transition_steps) will_transition = 0;
+}
+
+
 void sparkle(){
 	if (DEBUG && eflag) {Serial.println("Beginning Effect sparkle...");eflag=0;}
 
@@ -139,7 +202,7 @@ void sparkle(){
   }
 }
 
-void (*menu[])() = {flavorWipe,flavorFill,rainbow,rainbowCycle,sparkle};
+void (*menu[])() = {flavorWipe,flavorFill,rainbow,rainbowCycle,colorCycleFade,colorCycle,sparkle};
 uint8_t menu_count = sizeof(menu)/2;
 
 void decompose(uint16_t p) {
@@ -155,9 +218,25 @@ void decompose(uint16_t p) {
 		// if (color_start[p][0] < color_start[p][0]) 
 		// if (color_start[p][0] < color_start[p][0]) 
 		// if (color_start[p][0] < color_start[p][0]) 
-		increments[p][0] = (color_end[p][0] - color_start[p][0]) / transition_steps; //// 32 is the magic transition step number
-		increments[p][1] = (color_end[p][1] - color_start[p][1]) / transition_steps; 
-		increments[p][2] = (color_end[p][2] - color_start[p][2]) / transition_steps; 
+		inc_a = (color_end[p][0] - color_start[p][0]);
+		inc_b = (color_end[p][1] - color_start[p][1]);
+		inc_c = (color_end[p][2] - color_start[p][2]);
+
+		if (inc_a != 0) {increments[p][0] = inc_a / transition_steps;} else { increments[p][0] = 0;} //// 32 is the magic transition step number
+		if (inc_b != 0) {increments[p][1] = inc_b / transition_steps;} else { increments[p][1] = 0;} 
+		if (inc_c != 0) {increments[p][2] = inc_c / transition_steps;} else { increments[p][2] = 0;} 
+
+		// Serial.print(p);
+		// Serial.println(" ------ decomp");
+		// for(int j=0; j<3; j++){					
+		//   Serial.println(increments[p][j]);
+		// }
+
+		// increments[p][0] = (color_end[p][0] - color_start[p][0]) / transition_steps; //// 32 is the magic transition step number
+		// increments[p][1] = (color_end[p][1] - color_start[p][1]) / transition_steps; 
+		// increments[p][2] = (color_end[p][2] - color_start[p][2]) / transition_steps; 
+		
+		// delay(2000); ///
 	}
 }
 void recompose(uint16_t p) {
@@ -174,7 +253,8 @@ void transition() {
 			decompose(i);
 
 		}
-		will_transition = 0;	
+		will_transition = 0;
+		current_transition_step = 0;
 	}	
 
 	for(int i=0; i<pixelsTotal; i++){
@@ -184,19 +264,19 @@ void transition() {
 		color_start[i][2] += increments[i][2];
 
 		colors[i] = color(color_start[i][0],color_start[i][1],color_start[i][2]);	
+		current_transition_step++;
 
-
-		Serial.print(i);
-		Serial.println(" ------");
-		for(int j=0; j<3; j++){					
-		  Serial.println(increments[i][j]);
-		}    				
+		// Serial.print(i);
+		// Serial.println(" trans ------");
+		// for(int j=0; j<3; j++){					
+		//   Serial.println(increments[i][j]);
+		// }    				
 		
 	}
-
+	// delay(1000);
 }
 
-
+// #setup
 void setup()
 {
 	Serial.begin(9600);
@@ -214,12 +294,12 @@ void setup()
 	iter = 0;
 	itermax = pixelsTotal;
 
+	selector = 5;
 
 	DEBUG = 1;
 	verbose = 0;
 
 	if (DEBUG) statusUpdate();
-
 
 }
 
@@ -250,11 +330,10 @@ void loop() {
 }	
 
 void rest() {
-
-	
+	// never happens.
 }
 void crank() {
-	// this is where things change.
+	// this is where we move forward.
 	// update mode, interval, phase etc.
 
 	if (iter < itermax) {
@@ -269,19 +348,23 @@ void churn() {
 	// this is where things change.
 	// Update based on interval and phase.
 
+
 	// This is where we switch on interval.
-	if (interval >= intervalCount) {
+	if (interval >= intervalCount) { /// This may belong in crank().
 		interval = 0;
-		
+
 		// selector = R(0,menu_count-1);
-		selector = 4; ///hardcoding.	
+		// selector = 4; ///hardcoding.	
 		
 		/// we need to account for user input changing the selector in the middle. 
 
 		/// Really we are supposed to have selector choose the 
 		/// settings for the effect and then declare the effect 
-		/// identifier within the selector statement 
+		/// identifier within the selector statement.
+		/// perhaps with an enum or via function. 
+		// if (effectComplete) choreography();
 
+		/// This goes into the project file as choreography() or something;
 		switch (selector) {
 	    case 0:
 	    	// flavorWipe()
@@ -313,16 +396,20 @@ void churn() {
     		itermax = 255;	    	
 
     		break;
-			case 4:
-				// will_transition = 1;
-				intervalCount = 1;
-				// sparkle()
-				itermax = 30;
-				density = R(1,pixelsTotal);
-				decay = 20;
-				updatePrimary(RandomWheel());
-				updateSecondary(color(0,0,0));
-				break;
+    	case 4:
+    		intervalCount = 1;
+    		frequency = 150;
+    	break;
+		case 5:
+			// will_transition = 1;
+			intervalCount = 1;
+			// sparkle()
+			itermax = 30;
+			density = R(1,pixelsTotal);
+			decay = 20;
+			updatePrimary(RandomWheel());
+			updateSecondary(color(0,0,0));
+			break;
 	    default:
 	      // do something... Reset probably. //This is a hack for not knowing why selector is going out of bounds
 	      updateAssorted();
@@ -345,7 +432,6 @@ void churn() {
 void pour() {	
 	// this is where we lay the goods.
 
-	/// foreach set pixel based on colors array[];
 	for(int i=0; i<pixelsTotal; i++){
 	    strip->setPixelColor(i,colors[i]);
 	}
@@ -373,6 +459,8 @@ void taste() {
 // }
 
 // 
+
+// virtual void q() =0;
 void q(uint16_t pos, uint32_t c) {		
 	
 	int p;
@@ -384,7 +472,7 @@ void q(uint16_t pos, uint32_t c) {
 		/// Still need orientation and direction statements here
 		p = pos;
 	} else 
-	if (mode == mirrored) {
+	if (mode == mirrored) { /// Mirror mode should be seperate and augment any of the other modes. ie any mode could be mirrod.
 		// left/right mirror mode.
 		// p = mirror(pos);
 	} else 
@@ -439,8 +527,8 @@ void serialRouting(char x) {
 		//Flags, set read mode., begin
 	
 	if 				( x == '!' ) 		{		readMode 	= 1;  	}					//Set Selector
-	else if 	( x == '@' ) 		{		readMode 	= 2;  	}	 				//Frame Duration
-	else if  	( x == '#' ) 		{		readMode 	= 3; 		}					//Frame Interval
+	else if 	( x == '@' ) 		{		readMode 	= 2;  	}	 				//Set Frequency
+	else if  	( x == '#' ) 		{		readMode 	= 3; 		}					//Set 
 	else if   ( x == '+' ) 		{		readMode 	= 4;  	}					//Shift Register IDs, separated by comma (no whitespace)
 	else if   ( x == '-' ) 		{		readMode 	= 5;  	}					//Shift Register IDs, separated by comma (no whitespace)
 	else if   ( x == '~' ) 		{		readMode 	= 6;  	}					//System Mode 
@@ -466,18 +554,20 @@ void serialRouting(char x) {
 		
 			// lastSerialCMD = now; 						//Used for switching to autoPilot
 			readMode = 0;										//We're done reading. (until another.)
-			// autoPilot = false;
+			autoPilot = false;
 		
-			bufferIndex = 0;
-					
+			bufferIndex = 0;					
 	}
-	else 										{ messageBuffer[bufferIndex++] = x; } 				//Magic.
+	else { messageBuffer[bufferIndex++] = x; } 				//Magic.
 
 }
 void setSelector() {
 	// if (messageBuffer) /// do we need checking here? it's all going to change eventually.
-	/// Also we should probably reset our interval here.
+	/// Also we should probably reset our interval here.	
+
 	selector = atoi(messageBuffer);
+	if (DEBUG) Serial.print("User updated selector: ");Serial.println(selector);
+
 	intervalCount = 0;
 	resetMessageBuffer();	
 }
@@ -512,10 +602,12 @@ void statusUpdate() {
 	Serial.println(verbose);
 	
 	Serial.println("<===========>");
-	
-	for (int j=0;j<menu_count;j++) {
-		Serial.println(j);	
-	}
+	Serial.println("");
+	/// checking how many items are in the menu / effect list. 
+	// for (int j=0;j<menu_count;j++) {
+	// 	Serial.println(j);	
+	// }
+
 	// resetMessageBuffer();
 }
 
